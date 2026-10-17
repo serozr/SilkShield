@@ -8,12 +8,14 @@ services:
     image: silkshield:latest
     container_name: silkshield-linuxone
     restart: unless-stopped
-    ports:
-      - "127.0.0.1:8000:8000"
+    # LinuxONE host networking lets the app reach a loopback-bound llama.cpp
+    # process while keeping the API itself loopback-only.
+    network_mode: host
     env_file:
       - .env
     environment:
       - PORT=8000
+    command: ["python", "-m", "uvicorn", "app.main:app", "--host", "127.0.0.1", "--port", "8000"]
     healthcheck:
       test: ["CMD", "curl", "-f", "http://127.0.0.1:8000/health"]
       interval: 30s

@@ -49,6 +49,7 @@
 ## Phase 6 --- IBM LinuxONE
 
 -   [x] deployment package present (Dockerfile, docker-compose, deploy.sh)
+-   [x] local Granite host process and LinuxONE Compose networking documented
 -   [x] health and telemetry endpoints implemented (/health, /system/info)
 -   [x] platform telemetry badge integrated
 -   [x] historical benchmark report present (docs/BENCHMARK_RESULTS.md; rerun on target before using as acceptance evidence)

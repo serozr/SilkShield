@@ -99,7 +99,7 @@ otherwise it may use a clearly labelled demo fixture or local fallback. Check
 The local Granite setup is optional; see
 [docs/LOCAL_LLM_SETUP.md](docs/LOCAL_LLM_SETUP.md).
 
-The deployment script and Docker Compose publish the API only on loopback.
+The deployment script and Docker Compose expose the API only on loopback.
 For remote administration, use an SSH tunnel instead of exposing port 8000
 publicly (for example, `ssh -L 8000:127.0.0.1:8000 user@server`). The API does
 not provide authentication; do not bind it to a public interface without a

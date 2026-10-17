@@ -6,6 +6,26 @@ SilkShield can use the Granite model running locally through `llama.cpp`. No clo
 
 **Terminal A — local model server:** leave the running command alive. It should say:
 
+```bash
+cd ~/llama.cpp
+nohup ./build/bin/llama-server \
+  -hf taronaeo/Granite-3.0-1B-A400M-Instruct-BE-GGUF:Q4_K_M \
+  --host 127.0.0.1 \
+  --port 8080 \
+  --ctx-size 2048 \
+  --threads 2 \
+  > /tmp/silkshield-granite.log 2>&1 < /dev/null &
+```
+
+Check the model API and startup log:
+
+```bash
+curl -sS --max-time 3 http://127.0.0.1:8080/v1/models
+tail -30 /tmp/silkshield-granite.log
+```
+
+Expected startup messages:
+
 ```text
 model loaded
 listening on http://127.0.0.1:8080
@@ -75,3 +95,38 @@ That metadata value proves the app selected the local LLM provider. The response
 - **Provider remains `demo_fallback`:** confirm `AI_PROVIDER=local` in `.env` and restart Uvicorn.
 - **Slow request or invalid JSON:** the small 1B model is running on CPU; output quality and formatting are limited. The provider returns a safe `MONITOR` recommendation when the response is not valid JSON.
 - **Do not expose port 8080 publicly.** Keep the service bound to loopback, especially because the test server currently has no API key.
+
+## Run the app with Docker Compose on LinuxONE
+
+The Compose service does not download or start `llama.cpp`; start the model as
+the separate host process described above. Docker's normal bridge network gives
+the container its own loopback interface, so `127.0.0.1:8080` would not reach a
+model running on the host. The LinuxONE Compose configuration therefore uses
+host networking, and explicitly binds the API to `127.0.0.1:8000`. Use this
+configuration with Docker Engine on Linux (including the LinuxONE Ubuntu VM).
+Host networking shares the host network stack with this trusted app container;
+use this mode only when the app needs the host-local Granite service. The API
+process itself still binds only to loopback.
+
+First, keep the model server running on the host at `127.0.0.1:8080`, and make
+sure the existing `.env` has the local provider settings from section 2. Then
+start the app container:
+
+```bash
+cd ~/SilkShield
+docker compose up --build -d
+docker compose logs --tail=30 silkshield
+```
+
+Both the host model and API remain available only through loopback. Verify them
+from the VM:
+
+```bash
+curl -sS --max-time 3 http://127.0.0.1:8080/v1/models
+curl -sS --max-time 3 http://127.0.0.1:8000/health
+```
+
+Use an SSH tunnel for access from a workstation. Do not add a public `ports`
+mapping or change either process to listen on `0.0.0.0`. This host-network
+Compose mode is Linux-specific; Docker Desktop or a bridge-network deployment
+needs a separately secured host-to-container route and is not configured here.
