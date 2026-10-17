@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SilkShield — AI-Powered Threat Decision Engine</title>
+    <meta name="description" content="Real-time AI-powered cybersecurity threat analysis and decision engine. Transform threat intelligence into explainable security decisions.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <!-- Animated background -->
+    <div class="bg-grid"></div>
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-brand">
+            <div class="logo">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                    <path d="M16 2L28 8V16C28 23.18 22.84 29.64 16 31C9.16 29.64 4 23.18 4 16V8L16 2Z" 
+                          fill="url(#shield-grad)" opacity="0.9"/>
+                    <path d="M16 6L24 10V16C24 21.05 20.67 25.71 16 27C11.33 25.71 8 21.05 8 16V10L16 6Z" 
+                          fill="url(#shield-inner)" opacity="0.5"/>
+                    <circle cx="16" cy="15" r="4" fill="url(#core-grad)"/>
+                    <defs>
+                        <linearGradient id="shield-grad" x1="4" y1="2" x2="28" y2="31">
+                            <stop stop-color="#06b6d4"/>
+                            <stop offset="1" stop-color="#8b5cf6"/>
+                        </linearGradient>
+                        <linearGradient id="shield-inner" x1="8" y1="6" x2="24" y2="27">
+                            <stop stop-color="#06b6d4"/>
+                            <stop offset="1" stop-color="#a78bfa"/>
+                        </linearGradient>
+                        <radialGradient id="core-grad">
+                            <stop stop-color="#22d3ee"/>
+                            <stop offset="1" stop-color="#8b5cf6"/>
+                        </radialGradient>
+                    </defs>
+                </svg>
+            </div>
+            <div>
+                <h1 class="header-title">SilkShield</h1>
+                <p class="header-subtitle">AI-Powered Threat Decision Engine</p>
+            </div>
+        </div>
+        <div class="header-status">
+            <span class="status-dot"></span>
+            <span class="status-text">System Online</span>
+        </div>
+    </header>
+
+    <!-- Main content -->
+    <main class="main">
+
+        <!-- IOC Input Section -->
+        <section class="input-section">
+            <div class="input-card glass">
+                <h2 class="section-label">Analyze Indicator of Compromise</h2>
+                <div class="input-row">
+                    <div class="input-wrapper">
+                        <input 
+                            type="text" 
+                            id="ioc-input" 
+                            class="ioc-input" 
+                            placeholder="Enter IOC — domain, URL, IP address, or file hash"
+                            autocomplete="off"
+                            spellcheck="false"
+                        >
+                        <div class="input-glow"></div>
+                    </div>
+                    <button id="analyze-btn" class="analyze-btn" onclick="analyzeIOC()">
+                        <span class="btn-text">ANALYZE</span>
+                        <span class="btn-loader" id="btn-loader"></span>
+                    </button>
+                </div>
+                <div class="demo-iocs" id="demo-iocs">
+                    <span class="demo-label">Quick test:</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Idle State -->
+        <section class="idle-state" id="idle-state">
+            <div class="idle-card glass">
+                <div class="idle-icon">
+                    <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+                        <path d="M32 4L56 16V32C56 46.36 45.68 59.28 32 62C18.32 59.28 8 46.36 8 32V16L32 4Z" 
+                              stroke="url(#idle-grad)" stroke-width="2" fill="none" opacity="0.4"/>
+                        <circle cx="32" cy="30" r="8" stroke="#06b6d4" stroke-width="2" fill="none" opacity="0.6"/>
+                        <path d="M32 38V44" stroke="#06b6d4" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+                        <circle cx="32" cy="48" r="2" fill="#06b6d4" opacity="0.6"/>
+                        <defs>
+                            <linearGradient id="idle-grad" x1="8" y1="4" x2="56" y2="62">
+                                <stop stop-color="#06b6d4"/>
+                                <stop offset="1" stop-color="#8b5cf6"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <h3>Ready to Analyze</h3>
+                <p>Enter a domain, URL, IP address, or file hash to receive a real-time threat assessment with ML scoring and AI explanation.</p>
+            </div>
+        </section>
+
+        <!-- Loading State -->
+        <section class="loading-state hidden" id="loading-state">
+            <div class="loading-card glass">
+                <div class="loading-spinner">
+                    <div class="spinner-ring"></div>
+                    <div class="spinner-ring inner"></div>
+                </div>
+                <div class="loading-steps">
+                    <div class="step active" id="step-intel">
+                        <span class="step-icon">🔍</span>
+                        <span>Gathering Threat Intelligence</span>
+                    </div>
+                    <div class="step" id="step-ml">
+                        <span class="step-icon">🧠</span>
+                        <span>Running ML Risk Analysis</span>
+                    </div>
+                    <div class="step" id="step-ai">
+                        <span class="step-icon">🤖</span>
+                        <span>Generating AI Explanation</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Error State -->
+        <section class="error-state hidden" id="error-state">
+            <div class="error-card glass">
+                <div class="error-icon">⚠</div>
+                <h3>Analysis Error</h3>
+                <p id="error-message">An error occurred during analysis.</p>
+                <button class="retry-btn" onclick="retryAnalysis()">Retry Analysis</button>
+            </div>
+        </section>
+
+        <!-- Result State -->
+        <section class="result-state hidden" id="result-state">
+            <!-- Score Hero -->
+            <div class="score-hero glass" id="score-hero">
+                <div class="score-ring-container">
+                    <svg class="score-ring" viewBox="0 0 200 200">
+                        <circle cx="100" cy="100" r="85" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="12"/>
+                        <circle cx="100" cy="100" r="85" fill="none" stroke="url(#score-gradient)" stroke-width="12"
+                                stroke-linecap="round" stroke-dasharray="534" stroke-dashoffset="534"
+                                id="score-arc" transform="rotate(-90 100 100)"/>
+                        <defs>
+                            <linearGradient id="score-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" id="score-grad-start"/>
+                                <stop offset="100%" id="score-grad-end"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <div class="score-value">
+                        <span class="score-number" id="score-number">0</span>
+                        <span class="score-max">/ 100</span>
+                    </div>
+                </div>
+                <div class="score-details">
+                    <div class="risk-badge" id="risk-badge">—</div>
+                    <div class="score-meta">
+                        <div class="meta-item">
+                            <span class="meta-label">Classification</span>
+                            <span class="meta-value" id="classification">—</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Confidence</span>
+                            <span class="meta-value" id="confidence">—</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">IOC Type</span>
+                            <span class="meta-value" id="ioc-type">—</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Result Grid -->
+            <div class="result-grid">
+                <!-- AI Analysis -->
+                <div class="result-card glass" id="ai-card">
+                    <div class="card-header">
+                        <span class="card-icon">🤖</span>
+                        <h3>AI Security Analysis</h3>
+                    </div>
+                    <div class="ai-summary" id="ai-summary">—</div>
+                    <div class="ai-reasoning" id="ai-reasoning"></div>
+                </div>
+
+                <!-- Evidence -->
+                <div class="result-card glass" id="evidence-card">
+                    <div class="card-header">
+                        <span class="card-icon">🔍</span>
+                        <h3>Evidence</h3>
+                    </div>
+                    <ul class="evidence-list" id="evidence-list"></ul>
+                </div>
+
+                <!-- Recommendation -->
+                <div class="result-card glass" id="recommendation-card">
+                    <div class="card-header">
+                        <span class="card-icon">🛡️</span>
+                        <h3>Recommendation</h3>
+                    </div>
+                    <div class="recommendation-badge" id="recommendation-badge">—</div>
+                    <div class="recommendation-desc" id="recommendation-desc"></div>
+                </div>
+
+                <!-- MITRE ATT&CK -->
+                <div class="result-card glass" id="mitre-card">
+                    <div class="card-header">
+                        <span class="card-icon">🎯</span>
+                        <h3>MITRE ATT&CK</h3>
+                    </div>
+                    <div class="mitre-tags" id="mitre-tags"></div>
+                </div>
+            </div>
+
+            <!-- Metadata -->
+            <div class="metadata-bar glass" id="metadata-bar">
+                <span class="meta-chip" id="meta-source"></span>
+                <span class="meta-chip" id="meta-model"></span>
+                <span class="meta-chip" id="meta-provider"></span>
+                <span class="meta-chip" id="meta-version"></span>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>SilkShield &mdash; Real-Time AI for Critical Security Decisions</p>
+    </footer>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+# Environment
+.env
+.venv/
+venv/
+env/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# ML Model artifacts
+ml/model/*.joblib
+ml/model/*.json
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node (frontend)
+node_modules/
+
+# Logs
+*.log
