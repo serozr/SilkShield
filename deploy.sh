@@ -58,12 +58,13 @@ python3 -m ml.train
 
 # 6. Start Server in Background (nohup)
 PORT=${PORT:-8000}
+HOST=127.0.0.1
 echo -e "\n[*] Starting SilkShield server on port ${PORT}..."
 
 # Stop any existing instance
 pkill -f "uvicorn app.main:app" 2>/dev/null || true
 
-nohup python3 -m uvicorn app.main:app --host 0.0.0.0 --port "${PORT}" > silkshield.log 2>&1 &
+nohup python3 -m uvicorn app.main:app --host "${HOST}" --port "${PORT}" > silkshield.log 2>&1 &
 SERVER_PID=$!
 echo -e "[+] SilkShield started in background with PID ${GREEN}${SERVER_PID}${NC}."
 
@@ -75,11 +76,11 @@ HEALTH_STATUS=$(curl -s "http://127.0.0.1:${PORT}/health" || echo "failed")
 
 if [[ "$HEALTH_STATUS" =~ "silkshield" ]]; then
     echo -e "\n${GREEN}============================================================${NC}"
-    echo -e "${GREEN}  ✓ SilkShield is ONLINE on IBM LinuxONE!                  ${NC}"
+    echo -e "${GREEN}  ✓ SilkShield is ONLINE!                                  ${NC}"
     echo -e "${GREEN}============================================================${NC}"
-    echo -e "Dashboard URL : ${CYAN}http://$(hostname -I | awk '{print $1}'):${PORT}/${NC}"
     echo -e "Local URL     : ${CYAN}http://127.0.0.1:${PORT}/${NC}"
     echo -e "System Info   : ${CYAN}http://127.0.0.1:${PORT}/system/info${NC}"
+    echo -e "Remote access : use an SSH tunnel; the API is bound to loopback."
     echo -e "Logs          : tail -f silkshield.log"
     echo -e "============================================================"
 else

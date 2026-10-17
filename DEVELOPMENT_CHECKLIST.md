@@ -48,20 +48,24 @@
 
 ## Phase 6 --- IBM LinuxONE
 
--   [x] backend deployed / package prepared (Dockerfile, docker-compose, deploy.sh)
--   [x] health & telemetry endpoint reachable (/health, /system/info)
--   [x] ML inference tested
--   [x] AI tested
--   [x] benchmark measured (docs/BENCHMARK_RESULTS.md)
--   [x] hardware verification badge integrated
+-   [x] deployment package present (Dockerfile, docker-compose, deploy.sh)
+-   [x] health and telemetry endpoints implemented (/health, /system/info)
+-   [x] platform telemetry badge integrated
+-   [x] historical benchmark report present (docs/BENCHMARK_RESULTS.md; rerun on target before using as acceptance evidence)
+-   [ ] redeploy current revision and verify health/telemetry on LinuxONE
+-   [ ] verify local Granite and VirusTotal end-to-end on LinuxONE
+-   [ ] rerun ML inference and benchmark on the target s390x host
 
 ## Phase 7 --- Final
 
--   [ ] end-to-end demo
--   [ ] README
--   [ ] architecture diagram
--   [ ] judging criteria addressed
+-   [ ] end-to-end demo on the target environment
+-   [x] README setup, demo, and test instructions
+-   [x] architecture overview (ARCHITECTURE.md)
+-   [x] judging criteria documented (JUDGING_ALIGNMENT.md)
 -   [ ] presentation
--   [ ] demo script
--   [ ] backup demo data
--   [ ] final Git commit
+-   [x] demo runbook (DEMO.md)
+-   [x] offline demo fixtures (intelligence/fixtures.py)
+-   [x] eight automated unit/API tests pass locally after the delivery changes
+-   [x] GitHub Actions workflow configured for master pushes and pull requests
+-   [ ] confirm the GitHub Actions run is green for the published commit
+-   [ ] commit current delivery-hardening changes

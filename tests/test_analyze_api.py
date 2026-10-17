@@ -38,6 +38,35 @@ class AnalyzeApiDecisionTests(unittest.TestCase):
             mocked.start()
             self.addCleanup(mocked.stop)
 
+    def test_cors_allows_local_dashboard_origin(self):
+        response = self.client.options(
+            "/analyze",
+            headers={
+                "Origin": "http://localhost:8000",
+                "Access-Control-Request-Method": "POST",
+                "Access-Control-Request-Headers": "content-type",
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.headers["access-control-allow-origin"],
+            "http://localhost:8000",
+        )
+
+    def test_cors_rejects_untrusted_origin(self):
+        response = self.client.options(
+            "/analyze",
+            headers={
+                "Origin": "https://attacker.example",
+                "Access-Control-Request-Method": "POST",
+                "Access-Control-Request-Headers": "content-type",
+            },
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertNotIn("access-control-allow-origin", response.headers)
+
     def _analyze_at_score(self, score, classification, level):
         prediction = {
             "risk_score": score,
