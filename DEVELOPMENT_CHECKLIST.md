@@ -53,8 +53,9 @@
 -   [x] health and telemetry endpoints implemented (/health, /system/info)
 -   [x] platform telemetry badge integrated
 -   [x] historical benchmark report present (docs/BENCHMARK_RESULTS.md; rerun on target before using as acceptance evidence)
--   [ ] redeploy current revision and verify health/telemetry on LinuxONE
--   [ ] verify local Granite and VirusTotal end-to-end on LinuxONE
+-   [x] verify LinuxONE host health/telemetry and `/analyze` with local Granite (reported host revision `ec0fdbc`; user-provided terminal output)
+-   [ ] build and run the Docker Compose deployment on LinuxONE (Docker was not installed on the reported host)
+-   [ ] verify a live VirusTotal lookup end-to-end on LinuxONE (the reported response was `virustotal_cached`, so it does not prove a live lookup)
 -   [ ] rerun ML inference and benchmark on the target s390x host
 
 ## Phase 7 --- Final
