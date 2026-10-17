@@ -65,7 +65,11 @@ signals into an explainable security decision.**
 -   Streamlit or React frontend
 -   IBM LinuxONE / s390x deployment
 
-### Run the local Granite LLM (no paid API)\n\nA local `llama.cpp` server can be used by setting `AI_PROVIDER=local`, `LOCAL_LLM_API_URL=http://127.0.0.1:8080/v1/chat/completions`, and `LOCAL_LLM_MODEL_ID=local-granite` in `.env`. Keep the local model server running while using the SilkShield API. See [docs/LOCAL_LLM_SETUP.md](docs/LOCAL_LLM_SETUP.md).\n\n### IBM Granite / watsonx.ai setup
+### Run the local Granite LLM (no paid API)\n\nA local `llama.cpp` server can be used by setting `AI_PROVIDER=local`, `LOCAL_LLM_API_URL=http://127.0.0.1:8080/v1/chat/completions`, and `LOCAL_LLM_MODEL_ID=local-granite` in `.env`. Keep the local model server running while using the SilkShield API. See [docs/LOCAL_LLM_SETUP.md](docs/LOCAL_LLM_SETUP.md).\n\n### Decision guardrails
+
+The LLM provides an evidence-grounded explanation; the final action is validated against the risk score (`0–24`: `ALLOW`, `25–49`: `MONITOR`, `50–100`: `BLOCK`). MITRE ATT&CK techniques and mitigations are sourced from the local retrieval layer, not accepted directly from model-generated claims. Low-risk and benign IOCs do not receive inferred techniques by default.
+
+### IBM Granite / watsonx.ai setup
 
 See [docs/WATSONX_SETUP.md](docs/WATSONX_SETUP.md) for credentials, environment configuration, and a safe connectivity test. The demo provider remains the default until live Granite access is configured.
 
