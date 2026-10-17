@@ -2,49 +2,49 @@
 
 ## Phase 1 --- Foundation
 
--   [ ] Git repository created
--   [ ] Python environment created
--   [ ] FastAPI starts
--   [ ] `/health` works
--   [ ] `/analyze` skeleton works
--   [ ] API contract committed
+-   [x] Git repository created
+-   [x] Python environment created
+-   [x] FastAPI starts
+-   [x] `/health` works
+-   [x] `/analyze` skeleton works
+-   [x] API contract committed
 
 ## Phase 2 --- Intelligence
 
--   [ ] IOC type detection
--   [ ] VirusTotal adapter
--   [ ] normalized intelligence object
--   [ ] cache
--   [ ] safe demo fixture
+-   [x] IOC type detection
+-   [x] VirusTotal adapter
+-   [x] normalized intelligence object
+-   [x] cache
+-   [x] safe demo fixture
 
 ## Phase 3 --- ML
 
--   [ ] dataset selected
--   [ ] features documented
--   [ ] model trained
--   [ ] validation performed
--   [ ] model saved
--   [ ] inference endpoint works
+-   [x] dataset selected
+-   [x] features documented
+-   [x] model trained
+-   [x] validation performed
+-   [x] model saved
+-   [x] inference endpoint works
 
 ## Phase 4 --- AI
 
--   [ ] structured evidence passed to AI
--   [ ] Granite tested
--   [ ] fallback tested
--   [ ] explanation generated
--   [ ] recommendation generated
--   [ ] hallucination safeguards documented
+-   [x] structured evidence passed to AI
+-   [x] Granite tested
+-   [x] fallback tested
+-   [x] explanation generated
+-   [x] recommendation generated
+-   [x] hallucination safeguards documented
 
 ## Phase 5 --- Frontend
 
--   [ ] IOC input
--   [ ] loading state
--   [ ] score
--   [ ] classification
--   [ ] evidence
--   [ ] AI analysis
--   [ ] recommendation
--   [ ] error state
+-   [x] IOC input
+-   [x] loading state
+-   [x] score
+-   [x] classification
+-   [x] evidence
+-   [x] AI analysis
+-   [x] recommendation
+-   [x] error state
 
 ## Phase 6 --- IBM LinuxONE
 
