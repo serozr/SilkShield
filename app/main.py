@@ -201,6 +201,24 @@ async def analyze(request: AnalyzeRequest):
     if rec not in ("ALLOW", "MONITOR", "BLOCK"):
         rec = "MONITOR"
 
+    # Ground low-risk summaries in observed evidence, not unverified LLM claims.
+    ai_summary = str(ai.get("summary", "")).strip()
+    if ml["classification"] == "BENIGN" and ml["risk_score"] < 25:
+        grounded_parts = [
+            f"{ioc} is classified as BENIGN with {ml['risk_level']} risk "
+            f"(score {ml['risk_score']})."
+        ]
+        for evidence_item in ml["evidence"]:
+            if any(marker in evidence_item.lower() for marker in (
+                "security engines flagged",
+                "reputation score",
+                "suspicious keyword",
+            )):
+                grounded_parts.append(evidence_item.rstrip(".") + ".")
+        if not ai.get("mitre"):
+            grounded_parts.append("No MITRE ATT&CK techniques were returned.")
+        ai_summary = " ".join(grounded_parts)
+
     return AnalyzeResponse(
         ioc=ioc,
         type=ioc_type,
@@ -209,7 +227,7 @@ async def analyze(request: AnalyzeRequest):
         classification=ml["classification"],
         confidence=ml["confidence"],
         evidence=ml["evidence"],
-        ai_analysis=ai.get("summary", ""),
+        ai_analysis=ai_summary,
         recommendation=Recommendation(rec),
         mitre=ai.get("mitre", []),
         mitigations=ai.get("mitigations", []),
