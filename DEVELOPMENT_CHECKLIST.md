@@ -55,13 +55,13 @@
 -   [x] historical benchmark report present (docs/BENCHMARK_RESULTS.md; rerun on target before using as acceptance evidence)
 -   [x] verify LinuxONE host health/telemetry and `/analyze` with local Granite (reported host revision `ec0fdbc`; user-provided terminal output)
 -   [x] install Docker Engine and Compose on s390x; `hello-world` ran successfully
--   [ ] build and run the Docker Compose deployment on LinuxONE (XGBoost passed CMake metadata; SciPy source build then failed because gfortran/BLAS dependencies were missing; Dockerfile now includes them, rebuild pending)
--   [ ] verify a live VirusTotal lookup end-to-end on LinuxONE (the reported response was `virustotal_cached`, so it does not prove a live lookup)
--   [ ] rerun ML inference and benchmark on the target s390x host
+-   [x] build and start the Docker Compose deployment on LinuxONE; s390x image built and `/health` plus `/analyze` returned successfully
+-   [x] verify local Granite and live VirusTotal end-to-end on LinuxONE (`ai_provider=local_granite`, `intelligence_source=virustotal_live`)
+-   [ ] run a performance benchmark on the target s390x host
 
 ## Phase 7 --- Final
 
--   [ ] end-to-end demo on the target environment
+-   [x] end-to-end API demo on the target environment (live VirusTotal and local Granite)
 -   [x] README setup, demo, and test instructions
 -   [x] architecture overview (ARCHITECTURE.md)
 -   [x] judging criteria documented (JUDGING_ALIGNMENT.md)
@@ -71,4 +71,4 @@
 -   [x] eight automated unit/API tests pass locally after the delivery changes
 -   [x] GitHub Actions workflow configured for master pushes and pull requests
 -   [ ] confirm the GitHub Actions run is green for the published commit
--   [ ] commit current delivery-hardening changes
+-   [x] commit and push current delivery-hardening changes
