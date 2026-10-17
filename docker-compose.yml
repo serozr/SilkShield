@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  silkshield:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: silkshield:latest
+    container_name: silkshield-linuxone
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - PORT=8000
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3

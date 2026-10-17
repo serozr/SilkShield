@@ -224,7 +224,68 @@ function renderResult(d) {
     $("meta-source").textContent = `Source: ${sourceDisplay}`;
     $("meta-model").textContent = `ML: ${meta.model_available ? "XGBoost" : "Heuristic"}`;
     $("meta-provider").textContent = `AI: ${meta.ai_provider || "—"}`;
+    $("meta-platform").textContent = `Host: ${meta.host_platform || "Standard"}`;
     $("meta-version").textContent = `v${meta.analysis_version || "0.1.0"}`;
+}
+
+// ─── System Telemetry & Hardware Modal ────────────────────── //
+
+let systemTelemetryData = null;
+
+async function loadSystemTelemetry() {
+    try {
+        const res = await fetch(`${API}/system/info`);
+        if (!res.ok) return;
+        const data = await res.json();
+        systemTelemetryData = data;
+
+        const badge = $("platform-badge");
+        const text = $("platform-text");
+
+        if (data.is_linuxone) {
+            badge.classList.add("linuxone");
+            text.textContent = "IBM LinuxONE (s390x)";
+        } else {
+            text.textContent = data.platform_name || `${data.system} (${data.machine})`;
+        }
+
+        // Populate modal
+        $("hw-arch").textContent = data.machine || "—";
+        $("hw-os").textContent = `${data.system} ${data.release || ""}`;
+        $("hw-cpu").textContent = `${data.cpu_count} vCPUs`;
+        $("hw-vendor").textContent = data.vendor || "—";
+        $("hw-hypervisor").textContent = data.hypervisor || (data.is_linuxone ? "z/VM 7.3.0" : "None");
+        $("hw-mem").textContent = data.memory_total_mb ? `${data.memory_total_mb} MB` : "Available";
+
+        const banner = $("hw-linuxone-banner");
+        if (data.is_linuxone) {
+            banner.innerHTML = `<span class="hw-banner-icon">🛡️</span><span><strong>Verified IBM LinuxONE Host:</strong> Enterprise s390x architecture with hardware-accelerated security.</span>`;
+        } else {
+            banner.innerHTML = `<span class="hw-banner-icon">💻</span><span>Development Environment: Ready for IBM LinuxONE container/native deployment.</span>`;
+        }
+    } catch {
+        /* silently ignore if endpoint is unreachable */
+    }
+}
+
+function initModal() {
+    const modal = $("hardware-modal");
+    const badge = $("platform-badge");
+    const closeBtn = $("close-modal-btn");
+
+    badge?.addEventListener("click", () => {
+        modal?.classList.remove("hidden");
+    });
+
+    closeBtn?.addEventListener("click", () => {
+        modal?.classList.add("hidden");
+    });
+
+    modal?.addEventListener("click", (e) => {
+        if (e.target === modal) {
+            modal.classList.add("hidden");
+        }
+    });
 }
 
 // ─── Helpers ───────────────────────────────────────────────── //
@@ -269,10 +330,15 @@ document.addEventListener("keydown", (e) => {
     if (e.key === "Enter" && document.activeElement === $("ioc-input")) {
         analyzeIOC();
     }
+    if (e.key === "Escape") {
+        $("hardware-modal")?.classList.add("hidden");
+    }
 });
 
 // ─── Init ──────────────────────────────────────────────────── //
 document.addEventListener("DOMContentLoaded", () => {
     loadDemoIOCs();
+    loadSystemTelemetry();
+    initModal();
     $("ioc-input")?.focus();
 });

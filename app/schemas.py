@@ -56,6 +56,7 @@ class AnalyzeResponse(BaseModel):
 class HealthResponse(BaseModel):
     status: str = "ok"
     service: str = "silkshield"
+    telemetry: Optional[dict] = None
 
 
 # ---------- Error ---------- #

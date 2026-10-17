@@ -47,9 +47,15 @@
                 <p class="header-subtitle">AI-Powered Threat Decision Engine</p>
             </div>
         </div>
-        <div class="header-status">
-            <span class="status-dot"></span>
-            <span class="status-text">System Online</span>
+        <div class="header-actions">
+            <button id="platform-badge" class="platform-badge" title="Click to view host platform telemetry">
+                <span class="platform-icon">⚡</span>
+                <span id="platform-text">Inspecting Host...</span>
+            </button>
+            <div class="header-status">
+                <span class="status-dot"></span>
+                <span class="status-text">System Online</span>
+            </div>
         </div>
     </header>
 
@@ -227,11 +233,57 @@
                 <span class="meta-chip" id="meta-source"></span>
                 <span class="meta-chip" id="meta-model"></span>
                 <span class="meta-chip" id="meta-provider"></span>
+                <span class="meta-chip" id="meta-platform"></span>
                 <span class="meta-chip" id="meta-version"></span>
             </div>
         </section>
 
     </main>
+
+    <!-- Hardware / Platform Inspection Modal -->
+    <div id="hardware-modal" class="modal-overlay hidden">
+        <div class="modal-card glass">
+            <div class="modal-header">
+                <div class="modal-title-row">
+                    <span class="modal-icon">🏛️</span>
+                    <h3>Host Platform Telemetry</h3>
+                </div>
+                <button id="close-modal-btn" class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="hardware-grid">
+                    <div class="hw-item">
+                        <span class="hw-label">Architecture</span>
+                        <span id="hw-arch" class="hw-val">—</span>
+                    </div>
+                    <div class="hw-item">
+                        <span class="hw-label">System / Kernel</span>
+                        <span id="hw-os" class="hw-val">—</span>
+                    </div>
+                    <div class="hw-item">
+                        <span class="hw-label">CPU Cores</span>
+                        <span id="hw-cpu" class="hw-val">—</span>
+                    </div>
+                    <div class="hw-item">
+                        <span class="hw-label">Vendor / Machine</span>
+                        <span id="hw-vendor" class="hw-val">—</span>
+                    </div>
+                    <div class="hw-item">
+                        <span class="hw-label">Hypervisor</span>
+                        <span id="hw-hypervisor" class="hw-val">—</span>
+                    </div>
+                    <div class="hw-item">
+                        <span class="hw-label">Total Memory</span>
+                        <span id="hw-mem" class="hw-val">—</span>
+                    </div>
+                </div>
+                <div id="hw-linuxone-banner" class="hw-banner">
+                    <span class="hw-banner-icon">🛡️</span>
+                    <span class="hw-banner-text">Running enterprise-grade secure execution workload on IBM LinuxONE (s390x).</span>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer class="footer">

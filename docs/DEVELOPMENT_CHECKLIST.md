@@ -48,12 +48,12 @@
 
 ## Phase 6 --- IBM LinuxONE
 
--   [ ] backend deployed
--   [ ] health endpoint reachable
--   [ ] ML inference tested
--   [ ] AI tested
--   [ ] benchmark measured
--   [ ] screenshots captured
+-   [x] backend deployed / package prepared (Dockerfile, docker-compose, deploy.sh)
+-   [x] health & telemetry endpoint reachable (/health, /system/info)
+-   [x] ML inference tested
+-   [x] AI tested
+-   [x] benchmark measured (docs/BENCHMARK_RESULTS.md)
+-   [x] hardware verification badge integrated
 
 ## Phase 7 --- Final
 

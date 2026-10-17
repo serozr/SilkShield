@@ -34,6 +34,7 @@ from intelligence.cache import cache_key, get_cached, set_cached
 from intelligence.fixtures import get_demo_iocs, get_fixture
 from ml.predict import predict
 from ai.analyst import analyze_threat
+from app.telemetry import get_system_telemetry
 
 # ─── App ────────────────────────────────────────────────────── #
 
@@ -63,8 +64,14 @@ vt = VirusTotalClient()
 
 @app.get("/health", response_model=HealthResponse)
 async def health():
-    """Health check endpoint."""
-    return HealthResponse()
+    """Health check endpoint with host platform telemetry."""
+    return HealthResponse(telemetry=get_system_telemetry())
+
+
+@app.get("/system/info")
+async def system_info():
+    """Detailed hardware and platform inspection (IBM LinuxONE / s390x verifier)."""
+    return get_system_telemetry()
 
 
 @app.get("/api/virustotal/health")
@@ -207,6 +214,8 @@ async def analyze(request: AnalyzeRequest):
             "intelligence_source": intel_data.get("source", "unknown"),
             "model_available": ml.get("model_available", False),
             "ai_provider": ai.get("provider", "unknown"),
+            "host_platform": get_system_telemetry()["platform_name"],
+            "is_linuxone": get_system_telemetry()["is_linuxone"],
         },
     )
 
