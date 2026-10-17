@@ -65,7 +65,7 @@ signals into an explainable security decision.**
 -   Streamlit or React frontend
 -   IBM LinuxONE / s390x deployment
 
-### IBM Granite / watsonx.ai setup
+### Run the local Granite LLM (no paid API)\n\nA local `llama.cpp` server can be used by setting `AI_PROVIDER=local`, `LOCAL_LLM_API_URL=http://127.0.0.1:8080/v1/chat/completions`, and `LOCAL_LLM_MODEL_ID=local-granite` in `.env`. Keep the local model server running while using the SilkShield API. See [docs/LOCAL_LLM_SETUP.md](docs/LOCAL_LLM_SETUP.md).\n\n### IBM Granite / watsonx.ai setup
 
 See [docs/WATSONX_SETUP.md](docs/WATSONX_SETUP.md) for credentials, environment configuration, and a safe connectivity test. The demo provider remains the default until live Granite access is configured.
 
