@@ -75,3 +75,25 @@ def normalize_virustotal(ioc: str, ioc_type: str, raw: dict) -> NormalizedIntell
         metadata=meta,
         source="virustotal",
     )
+
+
+def normalize_unseen_vt(ioc: str, ioc_type: str) -> NormalizedIntelligence:
+    """Normalize an IOC that is not yet indexed or found in VirusTotal (HTTP 404).
+
+    Allows the pipeline to evaluate the IOC in real-time using lexical,
+    network, and ML features instead of failing.
+    """
+    return NormalizedIntelligence(
+        ioc=ioc,
+        type=ioc_type,
+        detections=0,
+        total_engines=0,
+        detection_ratio=0.0,
+        reputation=0,
+        related_indicators=[],
+        metadata={
+            "status": "unseen",
+            "note": "Indicator not previously observed or submitted to VirusTotal database",
+        },
+        source="virustotal_unseen",
+    )

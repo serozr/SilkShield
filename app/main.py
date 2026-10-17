@@ -22,8 +22,14 @@ from app.schemas import (
     RiskLevel,
 )
 from intelligence.ioc import detect_ioc_type, validate_ioc
-from intelligence.virustotal import VirusTotalClient
-from intelligence.normalize import normalize_virustotal
+from intelligence.virustotal import (
+    VirusTotalClient,
+    VTAuthError,
+    VTNetworkError,
+    VTNotFoundError,
+    VTRateLimitError,
+)
+from intelligence.normalize import normalize_virustotal, normalize_unseen_vt
 from intelligence.cache import cache_key, get_cached, set_cached
 from intelligence.fixtures import get_demo_iocs, get_fixture
 from ml.predict import predict
@@ -61,6 +67,13 @@ async def health():
     return HealthResponse()
 
 
+@app.get("/api/virustotal/health")
+async def virustotal_health():
+    """Diagnostic check for VirusTotal API key and connectivity."""
+    client = VirusTotalClient()
+    return await client.test_connection()
+
+
 @app.get("/demo-iocs")
 async def demo_iocs():
     """Return available demo IOCs for testing."""
@@ -91,17 +104,33 @@ async def analyze(request: AnalyzeRequest):
     # 2 — intelligence (cache → live → fixture → empty)
     key = cache_key(ioc, ioc_type)
     intel_data = get_cached(key)
+    vt_warning: str | None = None
 
-    if intel_data is None:
+    if intel_data is not None:
+        intel_data = dict(intel_data)
+        if intel_data.get("source") in ("virustotal", "virustotal_live"):
+            intel_data["source"] = "virustotal_cached"
+    else:
         # try live VirusTotal
         if vt.is_configured:
             try:
                 raw = await vt.lookup(ioc, ioc_type)
                 intel = normalize_virustotal(ioc, ioc_type, raw)
                 intel_data = intel.to_dict()
+                intel_data["source"] = "virustotal_live"
                 set_cached(key, intel_data)
-            except Exception:
-                pass
+            except VTNotFoundError:
+                intel = normalize_unseen_vt(ioc, ioc_type)
+                intel_data = intel.to_dict()
+                set_cached(key, intel_data)
+            except VTRateLimitError:
+                vt_warning = "[!] VirusTotal rate limit reached (4 req/min for free tier). Fallback intelligence activated."
+            except VTAuthError:
+                vt_warning = "[!] VirusTotal API key is unauthorized or invalid. Fallback intelligence activated."
+            except VTNetworkError as net_err:
+                vt_warning = f"[!] VirusTotal connection failed ({net_err}). Fallback intelligence activated."
+            except Exception as exc:
+                vt_warning = f"[!] Threat intelligence error ({exc}). Fallback intelligence activated."
 
         # try demo fixture
         if intel_data is None:
@@ -112,6 +141,11 @@ async def analyze(request: AnalyzeRequest):
 
         # last resort: empty intelligence
         if intel_data is None:
+            fallback_source = (
+                "virustotal_rate_limited"
+                if (vt_warning and "rate limit" in vt_warning)
+                else "local_fallback"
+            )
             intel_data = {
                 "ioc": ioc,
                 "type": ioc_type,
@@ -121,11 +155,15 @@ async def analyze(request: AnalyzeRequest):
                 "reputation": 0,
                 "related_indicators": [],
                 "metadata": {},
-                "source": "none",
+                "source": fallback_source,
             }
 
     # 3 — ML prediction
     ml = predict(intel_data, ioc, ioc_type)
+    if vt_warning:
+        ml["evidence"].insert(0, vt_warning)
+    if intel_data.get("source") == "virustotal_unseen":
+        ml["evidence"].append("[!] Indicator not found in VirusTotal database (unseen/newly observed)")
 
     # 4 — AI analysis
     try:

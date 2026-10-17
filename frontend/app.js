@@ -164,11 +164,13 @@ function renderResult(d) {
     const evList = $("evidence-list");
     evList.innerHTML = "";
     (d.evidence || []).forEach((ev) => {
+        const isWarning = ev.includes("⚠") || ev.includes("[!]");
+        const cleanText = ev.replace("⚠ ", "").replace("[!] ", "").trim();
         const li = document.createElement("li");
-        li.className = "evidence-item" + (ev.includes("⚠") ? " warning" : "");
+        li.className = "evidence-item" + (isWarning ? " warning" : "");
         li.innerHTML = `
-            <span class="evidence-icon">${ev.includes("⚠") ? "⚠" : "✓"}</span>
-            <span>${escapeHtml(ev.replace("⚠ ", ""))}</span>
+            <span class="evidence-icon">${isWarning ? "⚠" : "✓"}</span>
+            <span>${escapeHtml(cleanText)}</span>
         `;
         evList.appendChild(li);
     });
@@ -205,8 +207,21 @@ function renderResult(d) {
             '<span class="no-mitre">No specific techniques identified</span>';
     }
 
+    // Intelligence source label formatter
+    const sourceLabels = {
+        virustotal: "VirusTotal (Live)",
+        virustotal_live: "VirusTotal (Live)",
+        virustotal_cached: "VirusTotal (Cached)",
+        virustotal_unseen: "VirusTotal (Unseen IOC)",
+        virustotal_rate_limited: "VT Limit (Fallback)",
+        demo_fixture: "Demo Fixture",
+        local_fallback: "Local Heuristics",
+    };
+    const rawSource = meta.intelligence_source || "";
+    const sourceDisplay = sourceLabels[rawSource] || rawSource || "Standard";
+
     // Metadata bar
-    $("meta-source").textContent = `Source: ${meta.intelligence_source || "—"}`;
+    $("meta-source").textContent = `Source: ${sourceDisplay}`;
     $("meta-model").textContent = `ML: ${meta.model_available ? "XGBoost" : "Heuristic"}`;
     $("meta-provider").textContent = `AI: ${meta.ai_provider || "—"}`;
     $("meta-version").textContent = `v${meta.analysis_version || "0.1.0"}`;
