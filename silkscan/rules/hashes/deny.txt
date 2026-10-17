@@ -1,0 +1,2 @@
+# SHA-256 deny-list: one lowercase hash per line, "#" starts a comment.
+# A hit forces the verdict to malicious (priority P1).

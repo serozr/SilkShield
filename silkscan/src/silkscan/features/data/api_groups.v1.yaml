@@ -1,0 +1,48 @@
+# API -> behaviour category mapping for the `import_semantics` feature group.
+# Changing this file changes the group's cache key (its sha256 is a tool version).
+# Bump `version` for any semantic change and keep old versions for old models.
+#
+# Function names are matched case-insensitively after stripping a trailing
+# ANSI/Unicode suffix (CreateFileW -> createfile). A DLL listed under `dlls`
+# assigns all functions imported from it to the category.
+version: 1
+categories:
+  network:
+    dlls: [ws2_32.dll, wsock32.dll, wininet.dll, winhttp.dll, urlmon.dll, dnsapi.dll, iphlpapi.dll, netapi32.dll, mpr.dll]
+    functions: [socket, connect, send, recv, sendto, recvfrom, bind, listen, accept, gethostbyname, getaddrinfo,
+                internetopen, internetopenurl, internetconnect, internetreadfile, httpopenrequest, httpsendrequest,
+                winhttpopen, winhttpconnect, winhttpsendrequest, urldownloadtofile, wsastartup]
+  file:
+    dlls: []
+    functions: [createfile, readfile, writefile, deletefile, movefile, movefileex, copyfile, findfirstfile,
+                findnextfile, setfileattributes, getfileattributes, createdirectory, removedirectory, gettemppath,
+                gettempfilename, setfilepointer, flushfilebuffers, replacefile]
+  process:
+    dlls: []
+    functions: [createprocess, createprocessasuser, openprocess, terminateprocess, createremotethread,
+                createremotethreadex, createthread, resumethread, suspendthread, getthreadcontext, setthreadcontext,
+                createtoolhelp32snapshot, process32first, process32next, thread32first, thread32next, winexec,
+                shellexecute, shellexecuteex, queueuserapc, ntcreatethreadex, ntqueueapcthread, rtlcreateuserthread]
+  memory:
+    dlls: []
+    functions: [virtualalloc, virtualallocex, virtualprotect, virtualprotectex, virtualfree, writeprocessmemory,
+                readprocessmemory, heapcreate, mapviewoffile, createfilemapping, ntallocatevirtualmemory,
+                ntprotectvirtualmemory, ntwritevirtualmemory, ntmapviewofsection, ntunmapviewofsection,
+                zwunmapviewofsection]
+  crypto:
+    dlls: [bcrypt.dll, ncrypt.dll, crypt32.dll, cryptsp.dll]
+    functions: [cryptacquirecontext, cryptencrypt, cryptdecrypt, cryptgenkey, cryptderivekey, cryptimportkey,
+                cryptexportkey, cryptcreatehash, crypthashdata, cryptgenrandom, cryptreleasecontext,
+                cryptstringtobinary, cryptbinarytostring, cryptprotectdata, cryptunprotectdata]
+  registry:
+    dlls: []
+    functions: [regopenkey, regopenkeyex, regcreatekey, regcreatekeyex, regsetvalue, regsetvalueex, regqueryvalue,
+                regqueryvalueex, regdeletekey, regdeletevalue, regenumkey, regenumkeyex, regenumvalue, regclosekey]
+  anti_analysis:
+    dlls: []
+    functions: [isdebuggerpresent, checkremotedebuggerpresent, ntqueryinformationprocess, outputdebugstring,
+                gettickcount, queryperformancecounter, ntsetinformationthread, findwindow, sleep, getsystemfirmwaretable]
+  dynamic_loading:
+    dlls: []
+    functions: [loadlibrary, loadlibraryex, getprocaddress, ldrloaddll, ldrgetprocedureaddress, getmodulehandle,
+                getmodulehandleex]

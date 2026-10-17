@@ -1,0 +1,2 @@
+# SHA-256 allow-list of known-good builds: one lowercase hash per line.
+# A hit forces the verdict to clean unless a deny/forcing rule also hits.

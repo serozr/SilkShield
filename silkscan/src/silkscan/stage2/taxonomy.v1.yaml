@@ -1,0 +1,27 @@
+# ClarAVy behaviour tag -> threat category. Tags are AV-consensus labels from EMBER2024 metadata
+# (targets, never features). Changing this file changes the stage-2 label fingerprint.
+# Tags not listed (encoder, selfdel, packed, injector, ...) describe traits, not a category; a record whose
+# tags are all unlisted is unlabelled for category training. `encoder` is deliberately not ransomware.
+version: 1
+categories:
+  ransomware:
+    impact: high
+    tags: [ransom]
+  stealer:
+    impact: high
+    tags: [passwordstealer, stealer, spyware, keylogger, banker]
+  backdoor:
+    impact: high
+    tags: [backdoor, remoteshell, rootkit, bypassuac]
+  downloader:
+    impact: medium
+    tags: [downloader, dropper, loader, psdownload]
+  coinminer:
+    impact: medium
+    tags: [coinminer]
+  infector:
+    impact: medium
+    tags: [virus, worm, autorun]
+  pua:
+    impact: low
+    tags: [adware, riskware, pua, hacktool, gamehack, cracktool, joke, toolbar, patcher]

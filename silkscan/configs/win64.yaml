@@ -1,0 +1,40 @@
+# EMBER2024 Win64 training configuration. Set EMBER2024_DIR to the extracted dataset.
+seed: 0
+work_dir: work/win64
+runs_dir: runs
+
+data:
+  root: ${EMBER2024_DIR}
+  file_type: Win64
+  splits:
+    train: ["*Win64_train*.jsonl", "**/*Win64_train*.jsonl"]
+    test: ["*Win64_test*.jsonl", "**/*Win64_test*.jsonl"]
+    challenge: ["*challenge*.jsonl", "**/*challenge*.jsonl"]
+  validation_start: "2024-07-28"   # last 8 training weeks
+  train_fraction: 1.0              # < 1.0: deterministic subsample of train
+  overlap_policy: error
+  duplicate_policy: keep_first     # released weekly files hold every record twice
+  chunk_size: 2048
+
+features:
+  cache_dir: work/win64/cache
+  n_jobs: 0                        # 0 = all CPU cores
+  groups:
+    - name: ember_v3
+      missing_policy: error
+    - name: section_summary
+      missing_policy: impute_with_indicator
+    - name: import_semantics
+      missing_policy: impute_with_indicator
+
+model:
+  num_boost_round: 500
+  early_stopping_rounds: 50
+  params:
+    num_threads: 0
+
+evaluation:
+  target_fpr: 0.001
+  report_fprs: [0.001, 0.01]
+  subgroup_flags:
+    dll: ember_v3.header_0043      # report EXE and DLL files separately

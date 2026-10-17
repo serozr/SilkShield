@@ -1,0 +1,65 @@
+data:
+  root: ${EMBER2024_DIR}
+  splits:
+    train:
+    - '*Win64_train*.jsonl'
+    - '**/*Win64_train*.jsonl'
+    test:
+    - '*Win64_test*.jsonl'
+    - '**/*Win64_test*.jsonl'
+    challenge:
+    - '*challenge*.jsonl'
+    - '**/*challenge*.jsonl'
+  file_type: Win64
+  id_field: sha256
+  label_field: label
+  date_field: first_submission_date
+  file_type_field: file_type
+  filter_file_type_splits:
+  - challenge
+  validation_start: '2024-07-28'
+  train_fraction: 0.3
+  overlap_policy: error
+  duplicate_policy: keep_first
+  duplicate_ignore_fields:
+  - caps
+  - ttps
+  - mbc
+  chunk_size: 2048
+features:
+  groups:
+  - name: ember_v3
+    enabled: true
+    missing_policy: error
+    params: {}
+  - name: section_summary
+    enabled: true
+    missing_policy: impute_with_indicator
+    params: {}
+  - name: import_semantics
+    enabled: true
+    missing_policy: impute_with_indicator
+    params: {}
+  - name: capa_capabilities
+    enabled: false
+    missing_policy: impute_with_indicator
+    params:
+      min_count: 20
+      max_vocab: 512
+  cache_dir: work/win64/cache
+  n_jobs: 0
+model:
+  params:
+    num_threads: 0
+  num_boost_round: 500
+  early_stopping_rounds: 50
+evaluation:
+  target_fpr: 0.001
+  report_fprs:
+  - 0.001
+  - 0.01
+  inconclusive_on_status: true
+  bootstrap: 200
+work_dir: work/win64-laptop
+runs_dir: runs/laptop
+seed: 0

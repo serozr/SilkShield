@@ -1,0 +1,19 @@
+{
+  "byteorder": "little",
+  "config_fingerprint": "471c29b9641b9304f87c1d693d8d199bcf035fdb735a89a357773f1765c39f07",
+  "machine": "x86_64",
+  "packages": {
+    "PyYAML": "6.0.3",
+    "lightgbm": "4.7.0",
+    "silkscan": "0.1.0",
+    "numpy": "2.5.4",
+    "scikit-learn": "1.9.1",
+    "scipy": "1.18.1",
+    "signify": "0.8.1",
+    "snapml": null,
+    "thrember": "0.1.0"
+  },
+  "python": "3.14.8",
+  "seed": 0,
+  "silkscan_version": "0.1.0"
+}
