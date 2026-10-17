@@ -147,11 +147,16 @@ class DemoFallbackProvider(AIProvider):
         for item in evidence_list[:3]:
             reasoning.append(f"Evidence: {item}")
 
+        retrieved_mitre = evidence.get("retrieved_mitre", {})
+        mitre_ids = retrieved_mitre.get("technique_ids") or (_estimate_mitre(classification) if score >= 50 else [])
+        mitigations = retrieved_mitre.get("suggested_mitigations", [])
+
         return {
             "summary": summary,
             "reasoning": reasoning,
             "recommendation": rec,
-            "mitre": _estimate_mitre(classification) if score >= 50 else [],
+            "mitre": mitre_ids,
+            "mitigations": mitigations,
             "provider": "demo_fallback",
         }
 
@@ -175,13 +180,21 @@ def _try_parse_json(text: str) -> Dict[str, Any]:
     try:
         start = text.index("{")
         end = text.rindex("}") + 1
-        return json.loads(text[start:end])
+        data = json.loads(text[start:end])
+        return {
+            "summary": data.get("summary", text[:500]),
+            "reasoning": data.get("reasoning", [text]),
+            "recommendation": data.get("recommendation", "MONITOR"),
+            "mitre": data.get("mitre", []),
+            "mitigations": data.get("mitigations", []),
+        }
     except (ValueError, json.JSONDecodeError):
         return {
             "summary": text[:500],
             "reasoning": [text],
             "recommendation": "MONITOR",
             "mitre": [],
+            "mitigations": [],
         }
 
 

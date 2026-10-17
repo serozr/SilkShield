@@ -184,12 +184,15 @@ async def analyze(request: AnalyzeRequest):
             ioc=ioc,
             ioc_type=ioc_type,
         )
-    except Exception:
+    except Exception as exc:
+        import traceback
+        traceback.print_exc()
         ai = {
-            "summary": "AI analysis temporarily unavailable.",
+            "summary": f"AI analysis temporarily unavailable ({exc}).",
             "reasoning": [],
             "recommendation": "MONITOR",
             "mitre": [],
+            "mitigations": [],
             "provider": "error",
         }
 
@@ -209,6 +212,7 @@ async def analyze(request: AnalyzeRequest):
         ai_analysis=ai.get("summary", ""),
         recommendation=Recommendation(rec),
         mitre=ai.get("mitre", []),
+        mitigations=ai.get("mitigations", []),
         metadata={
             "analysis_version": settings.analysis_version,
             "intelligence_source": intel_data.get("source", "unknown"),

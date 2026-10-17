@@ -50,6 +50,7 @@ class AnalyzeResponse(BaseModel):
     ai_analysis: str
     recommendation: Recommendation
     mitre: List[str] = []
+    mitigations: List[str] = []
     metadata: dict = {}
 
 

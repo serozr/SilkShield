@@ -207,6 +207,27 @@ function renderResult(d) {
             '<span class="no-mitre">No specific techniques identified</span>';
     }
 
+    // Defensive Mitigations (RAG Grounding)
+    const mitList = $("mitigations-list");
+    if (mitList) {
+        mitList.innerHTML = "";
+        const mitigations = d.mitigations || [];
+        if (mitigations.length > 0) {
+            mitigations.forEach((m) => {
+                const li = document.createElement("li");
+                li.className = "mitigation-item";
+                li.innerHTML = `
+                    <span class="mitigation-icon">🛡️</span>
+                    <span>${escapeHtml(m)}</span>
+                `;
+                mitList.appendChild(li);
+            });
+            $("mitigations-section")?.classList.remove("hidden");
+        } else {
+            $("mitigations-section")?.classList.add("hidden");
+        }
+    }
+
     // Intelligence source label formatter
     const sourceLabels = {
         virustotal: "VirusTotal (Live)",
