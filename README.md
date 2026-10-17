@@ -65,6 +65,10 @@ signals into an explainable security decision.**
 -   Streamlit or React frontend
 -   IBM LinuxONE / s390x deployment
 
+### IBM Granite / watsonx.ai setup
+
+See [docs/WATSONX_SETUP.md](docs/WATSONX_SETUP.md) for credentials, environment configuration, and a safe connectivity test. The demo provider remains the default until live Granite access is configured.
+
 ### Important MVP Principle
 
 The first milestone is a complete vertical slice:
