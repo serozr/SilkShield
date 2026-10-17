@@ -6,6 +6,12 @@ there is no separate frontend build step or API URL configuration. For remote
 LinuxONE use, access it through the loopback SSH tunnel documented in the
 README.
 
+The dashboard applies the IBM team website's emerald, warm-white, cream, and
+charcoal visual identity and supplied SilkShield mascot (`frontend/assets`).
+The analysis view remains connected to the `/analyze` API contract. Static
+sample-history and scripted-assistant screens from the design handoff are not
+used as live analysis data or AI responses.
+
 ## Goal
 
 Create a dashboard that makes the security decision immediately

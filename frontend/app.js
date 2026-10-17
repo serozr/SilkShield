@@ -269,6 +269,10 @@ async function loadSystemTelemetry() {
         } else {
             text.textContent = data.platform_name || `${data.system} (${data.machine})`;
         }
+        const platformLabel = data.is_linuxone
+            ? "IBM LinuxONE (s390x)"
+            : data.platform_name || `${data.system} (${data.machine})`;
+        $("welcome-eyebrow").textContent = `${platformLabel} · Security Analytics`;
 
         // Populate modal
         $("hw-arch").textContent = data.machine || "—";

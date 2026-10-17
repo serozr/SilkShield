@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════════════════════
    SilkShield — Design System & Styles
-   Dark, premium cybersecurity dashboard
+   SilkShield dashboard — IBM team visual system
    ═══════════════════════════════════════════════════════════════ */
 
 /* ─── Reset & Base ─────────────────────────────────────────── */
@@ -991,4 +991,177 @@ body {
     .score-meta { gap: 18px; }
     .result-card { padding: 20px 16px; }
     .hardware-grid { grid-template-columns: 1fr; }
+}
+
+/* ─── IBM team brand system ────────────────────────────────── */
+:root {
+    color-scheme: light;
+    --bg: #f4f6f0;
+    --bg-card: rgba(252, 250, 246, 0.96);
+    --bg-card-hover: #ffffff;
+    --border: rgba(23, 27, 26, 0.12);
+    --border-focus: rgba(0, 132, 61, 0.42);
+    --text: #343b37;
+    --text-dim: #59635d;
+    --text-bright: #171b1a;
+    --cyan: #00843d;
+    --cyan-dim: #056e36;
+    --violet: #9a6b27;
+    --violet-dim: #76521f;
+    --emerald: #00843d;
+    --amber: #9a6b27;
+    --rose: #c81e2b;
+    --red: #a8121b;
+    --grad-cyan: linear-gradient(135deg, #00843d, #056e36);
+    --grad-violet: linear-gradient(135deg, #f2bf75, #dca95f);
+    --grad-hero: linear-gradient(120deg, #00843d 0%, #056e36 72%, #9a6b27 140%);
+    --radius: 14px;
+    --radius-lg: 24px;
+    --radius-sm: 10px;
+    --font: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-display: 'Plus Jakarta Sans', 'Manrope', sans-serif;
+}
+
+body {
+    background: linear-gradient(145deg, #e8f3ed 0%, #f4f6f0 38%, #fcfaf6 100%);
+    color: var(--text);
+}
+
+.bg-grid, .bg-glow { display: none; }
+
+.glass {
+    background: var(--bg-card);
+    border-color: var(--border);
+    box-shadow: 0 14px 36px rgba(23, 27, 26, 0.055);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+
+.glass:hover { border-color: rgba(0, 132, 61, 0.25); }
+
+.header {
+    padding: 12px 32px;
+    background: rgba(252, 250, 246, 0.92);
+    border-bottom-color: rgba(23, 27, 26, 0.1);
+    box-shadow: 0 4px 20px rgba(23, 27, 26, 0.04);
+}
+
+.logo.brand-mascot {
+    width: 52px;
+    height: 52px;
+    object-fit: contain;
+    border-radius: 50%;
+    background: #fcfaf6;
+    animation: none;
+}
+
+.header-title {
+    font-family: var(--font-display);
+    background: none;
+    color: #00843d;
+    -webkit-text-fill-color: currentColor;
+}
+
+.header-subtitle { color: #59635d; }
+.main { max-width: 1160px; }
+
+.welcome-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 28px;
+    min-height: 190px;
+    margin-bottom: 20px;
+    padding: 28px 36px;
+    overflow: hidden;
+    border: 1px solid rgba(0, 132, 61, 0.12);
+    border-radius: var(--radius-lg);
+    background: linear-gradient(115deg, #e3f1e8 0%, #f6f5ec 62%, #ffe4b4 150%);
+}
+
+.welcome-eyebrow {
+    margin-bottom: 8px;
+    color: #056e36;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.welcome-banner h2 {
+    max-width: 680px;
+    color: #171b1a;
+    font-family: var(--font-display);
+    font-size: clamp(1.55rem, 3vw, 2.25rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1.18;
+}
+
+.welcome-banner p:last-child {
+    margin-top: 10px;
+    color: #59635d;
+    font-size: 0.95rem;
+}
+
+.welcome-mascot {
+    width: 132px;
+    height: 132px;
+    flex: 0 0 auto;
+    object-fit: contain;
+    border-radius: 50%;
+    mix-blend-mode: multiply;
+}
+
+.section-label, .card-header h3, .meta-label, .sub-section-title { color: #59635d; }
+.ioc-input { background: #fff; color: #171b1a; }
+.ioc-input::placeholder { color: #737c76; }
+.analyze-btn { color: #fff; }
+.demo-chip { color: #056e36; background: rgba(0, 132, 61, 0.07); border-color: rgba(0, 132, 61, 0.18); }
+.demo-chip:hover { color: #034d28; background: rgba(0, 132, 61, 0.12); }
+.idle-card p, .recommendation-desc, .footer { color: #59635d; }
+.risk-badge.low { color: #056e36; }
+.risk-badge.medium { color: #76521f; }
+.risk-badge.high, .risk-badge.critical { color: #a8121b; }
+.score-ring circle:first-child { stroke: rgba(23, 27, 26, 0.14) !important; }
+.evidence-icon, .mitigation-icon { color: #00843d; }
+.mitre-tag { color: #76521f; background: rgba(242, 191, 117, 0.16); border-color: rgba(154, 107, 39, 0.24); }
+.recommendation-badge.monitor { color: #171b1a; }
+.metadata-bar { background: rgba(252, 250, 246, 0.96); }
+.meta-chip { color: #59635d; background: #f4f6f0; }
+.platform-badge { color: #056e36; background: #e8f3ed; border-color: rgba(0, 132, 61, 0.24); }
+.platform-badge:hover { color: #034d28; background: #deece0; border-color: #00843d; box-shadow: 0 4px 14px rgba(0, 132, 61, 0.12); }
+.platform-badge.linuxone { color: #056e36; background: #e3f1e8; border-color: rgba(0, 132, 61, 0.35); box-shadow: none; }
+.header-status.online .status-dot { background: #00843d; box-shadow: 0 0 8px rgba(0, 132, 61, 0.25); }
+.header-status.online .status-text { color: #056e36; }
+.footer { border-top-color: rgba(23, 27, 26, 0.1); }
+
+.skip-link {
+    position: fixed;
+    top: 8px;
+    left: 8px;
+    z-index: 300;
+    padding: 10px 14px;
+    transform: translateY(-150%);
+    border-radius: 8px;
+    background: #171b1a;
+    color: #fff;
+}
+
+.skip-link:focus { transform: translateY(0); }
+
+@media (max-width: 768px) {
+    .header { padding: 10px 16px; }
+    .welcome-banner { min-height: 160px; padding: 22px; }
+    .welcome-mascot { width: 96px; height: 96px; }
+}
+
+@media (max-width: 520px) {
+    .welcome-banner { gap: 8px; padding: 20px 16px; }
+    .welcome-mascot { width: 70px; height: 70px; }
+    .welcome-banner p:last-child { max-width: 36ch; font-size: 0.82rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
 }

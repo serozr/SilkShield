@@ -4,47 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SilkShield — AI-Powered Threat Decision Engine</title>
-    <meta name="description" content="Real-time AI-powered cybersecurity threat analysis and decision engine. Transform threat intelligence into explainable security decisions.">
+    <meta name="description" content="Evidence-led threat analysis for domains, URLs, IP addresses, and file hashes.">
+    <meta name="theme-color" content="#00843D">
+    <link rel="icon" type="image/png" href="/static/assets/silkshield-logo-transparent.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css?v=team-brand-1">
 </head>
 <body>
-    <!-- Animated background -->
-    <div class="bg-grid"></div>
-    <div class="bg-glow bg-glow-1"></div>
-    <div class="bg-glow bg-glow-2"></div>
+    <a class="skip-link" href="#main-content">Skip to analysis</a>
 
     <!-- Header -->
     <header class="header">
         <div class="header-brand">
-            <div class="logo">
-                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-                    <path d="M16 2L28 8V16C28 23.18 22.84 29.64 16 31C9.16 29.64 4 23.18 4 16V8L16 2Z" 
-                          fill="url(#shield-grad)" opacity="0.9"/>
-                    <path d="M16 6L24 10V16C24 21.05 20.67 25.71 16 27C11.33 25.71 8 21.05 8 16V10L16 6Z" 
-                          fill="url(#shield-inner)" opacity="0.5"/>
-                    <circle cx="16" cy="15" r="4" fill="url(#core-grad)"/>
-                    <defs>
-                        <linearGradient id="shield-grad" x1="4" y1="2" x2="28" y2="31">
-                            <stop stop-color="#06b6d4"/>
-                            <stop offset="1" stop-color="#8b5cf6"/>
-                        </linearGradient>
-                        <linearGradient id="shield-inner" x1="8" y1="6" x2="24" y2="27">
-                            <stop stop-color="#06b6d4"/>
-                            <stop offset="1" stop-color="#a78bfa"/>
-                        </linearGradient>
-                        <radialGradient id="core-grad">
-                            <stop stop-color="#22d3ee"/>
-                            <stop offset="1" stop-color="#8b5cf6"/>
-                        </radialGradient>
-                    </defs>
-                </svg>
-            </div>
+            <img class="logo brand-mascot" src="/static/assets/silkshield-logo-transparent.png" alt="" width="52" height="52">
             <div>
                 <h1 class="header-title">SilkShield</h1>
-                <p class="header-subtitle">AI-Powered Threat Decision Engine</p>
+                <p class="header-subtitle">Evidence-led threat analysis</p>
             </div>
         </div>
         <div class="header-actions">
@@ -60,7 +37,16 @@
     </header>
 
     <!-- Main content -->
-    <main class="main">
+    <main class="main" id="main-content">
+
+        <section class="welcome-banner" aria-labelledby="welcome-title">
+            <div>
+                <p class="welcome-eyebrow" id="welcome-eyebrow">SilkShield · Security Analytics</p>
+                <h2 id="welcome-title">Make a clearer call on suspicious indicators.</h2>
+                <p>Review threat intelligence, risk scoring, and an AI explanation in one place.</p>
+            </div>
+            <img src="/static/assets/silkshield-logo-transparent.png" alt="" class="welcome-mascot" width="132" height="132">
+        </section>
 
         <!-- IOC Input Section -->
         <section class="input-section">
@@ -72,7 +58,8 @@
                             type="text" 
                             id="ioc-input" 
                             class="ioc-input" 
-                            placeholder="Enter IOC — domain, URL, IP address, or file hash"
+                            placeholder="Domain, URL, IP address, or file hash"
+                            aria-label="Indicator of compromise to analyze"
                             autocomplete="off"
                             spellcheck="false"
                         >
@@ -297,6 +284,6 @@
         <p>SilkShield &mdash; Real-Time AI for Critical Security Decisions</p>
     </footer>
 
-    <script src="/static/app.js"></script>
+    <script src="/static/app.js?v=team-brand-1"></script>
 </body>
 </html>
