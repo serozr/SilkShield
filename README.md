@@ -65,7 +65,55 @@ signals into an explainable security decision.**
 -   Streamlit or React frontend
 -   IBM LinuxONE / s390x deployment
 
-### Run the local Granite LLM (no paid API)\n\nA local `llama.cpp` server can be used by setting `AI_PROVIDER=local`, `LOCAL_LLM_API_URL=http://127.0.0.1:8080/v1/chat/completions`, and `LOCAL_LLM_MODEL_ID=local-granite` in `.env`. Keep the local model server running while using the SilkShield API. See [docs/LOCAL_LLM_SETUP.md](docs/LOCAL_LLM_SETUP.md).\n\n### Decision guardrails
+### Run SilkShield locally
+
+Python 3.10 or newer is recommended. From the repository root, create an
+environment, install the requirements, and copy the example configuration:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+test -f .env || cp .env.example .env
+```
+
+The default `AI_PROVIDER=demo` needs no model server or AI credentials. Start
+the API bound to loopback:
+
+```bash
+python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
+```
+
+In another terminal, check the service and submit a benign example domain:
+
+```bash
+curl -sS http://127.0.0.1:8000/health
+curl -sS -X POST http://127.0.0.1:8000/analyze \
+  -H 'Content-Type: application/json' \
+  -d '{"ioc":"google.com","type":"domain"}'
+```
+
+The API may use live VirusTotal data when `VIRUSTOTAL_API_KEY` is configured;
+otherwise it may use a clearly labelled demo fixture or local fallback. Check
+`metadata.intelligence_source` in the response before interpreting evidence.
+The local Granite setup is optional; see
+[docs/LOCAL_LLM_SETUP.md](docs/LOCAL_LLM_SETUP.md).
+
+### Run the local Granite LLM (no paid API)
+
+A local `llama.cpp` server can be used by setting `AI_PROVIDER=local`,
+`LOCAL_LLM_API_URL=http://127.0.0.1:8080/v1/chat/completions`, and
+`LOCAL_LLM_MODEL_ID=local-granite` in `.env`. Keep the local model server
+running while using the SilkShield API. See
+[docs/LOCAL_LLM_SETUP.md](docs/LOCAL_LLM_SETUP.md).
+
+### Run tests
+
+```bash
+python -m unittest discover -s tests -v
+```
+
+### Decision guardrails
 
 The LLM provides an evidence-grounded explanation; the final action is validated against the risk score (`0–24`: `ALLOW`, `25–49`: `MONITOR`, `50–100`: `BLOCK`). MITRE ATT&CK techniques and mitigations are sourced from the local retrieval layer, not accepted directly from model-generated claims. Low-risk and benign IOCs do not receive inferred techniques by default.
 
