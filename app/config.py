@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     granite_api_url: str = ""  # regional base URL, e.g. https://us-south.ml.cloud.ibm.com
     granite_api_key: str = ""  # IBM Cloud API key; exchanged for IAM bearer token
     watsonx_project_id: str = ""
-    granite_model_id: str = "ibm/granite-13b-instruct-v2"
+    granite_model_id: str = "ibm/granite-4-h-small"
 
     # Cache
     cache_ttl: int = 3600
