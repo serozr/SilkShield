@@ -8,9 +8,9 @@ class Settings(BaseSettings):
     virustotal_api_key: str = ""
 
     # AI provider selector
-    ai_provider: str = "demo"  # "granite" | "demo"
+    ai_provider: str = "demo"  # "local" | "granite" | "demo"
 
-    # IBM watsonx.ai Runtime settings for Granite
+    # Local llama.cpp OpenAI-compatible endpoint (no key required)\n    local_llm_api_url: str = "http://127.0.0.1:8080/v1/chat/completions"\n    local_llm_model_id: str = "local-granite"\n\n    # IBM watsonx.ai Runtime settings for Granite
     granite_api_url: str = ""  # regional base URL, e.g. https://us-south.ml.cloud.ibm.com
     granite_api_key: str = ""  # IBM Cloud API key; exchanged for IAM bearer token
     watsonx_project_id: str = ""
