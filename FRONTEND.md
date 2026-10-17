@@ -1,5 +1,11 @@
 # SilkShield Frontend
 
+The dashboard is a static HTML/CSS/JavaScript client served by FastAPI at `/`;
+assets are served under `/static`. It uses the same origin for API requests, so
+there is no separate frontend build step or API URL configuration. For remote
+LinuxONE use, access it through the loopback SSH tunnel documented in the
+README.
+
 ## Goal
 
 Create a dashboard that makes the security decision immediately

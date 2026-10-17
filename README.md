@@ -99,6 +99,23 @@ otherwise it may use a clearly labelled demo fixture or local fallback. Check
 The local Granite setup is optional; see
 [docs/LOCAL_LLM_SETUP.md](docs/LOCAL_LLM_SETUP.md).
 
+### Open the dashboard
+
+The FastAPI service serves the dashboard and its static assets; no separate
+frontend build or server is required. Open `http://127.0.0.1:8000/` on the
+machine running the API.
+
+For the loopback-only LinuxONE deployment, create a Local SSH tunnel in PuTTY:
+under **Connection → SSH → Tunnels**, set **Source port** to `8000`,
+**Destination** to `127.0.0.1:8000`, select **Local**, click **Add**, then
+connect to the VM. Open `http://127.0.0.1:8000/` in the workstation browser.
+If local port `8000` is already in use, choose source port `18000` and open
+`http://127.0.0.1:18000/`; keep the destination at `127.0.0.1:8000`.
+
+The **Quick test** chips use the same `/analyze` pipeline. The response labels
+show whether intelligence is live, cached, a demo fixture, or a local fallback;
+never present fixture or cached data as live intelligence.
+
 The deployment script and Docker Compose expose the API only on loopback.
 For remote administration, use an SSH tunnel instead of exposing port 8000
 publicly (for example, `ssh -L 8000:127.0.0.1:8000 user@server`). The API does
