@@ -53,3 +53,4 @@ htmlcov/
 /work/z_transfer/*
 !/work/z_transfer/parity/
 !/work/z_transfer/parity/*.jsonl
+!/work/z_transfer/wheels/

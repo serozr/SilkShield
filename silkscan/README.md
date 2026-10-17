@@ -117,20 +117,39 @@ A file that could not be analysed is never reported as `clean`.
 
 ## IBM Z
 
+Only Ubuntu 24.04 on `linux/s390x` has been tested (under QEMU). On RHEL or SLES install the same packages with
+`dnf`/`zypper` (names may differ) or use conda.
+
+**Run the included model** (no dataset, no training):
+
 ```bash
 sudo apt install python3-venv python3-dev python3-numpy python3-scipy python3-sklearn python3-yaml \
-    python3-yara cmake g++ make git                       # Ubuntu; other distributions: same python3-* packages
-scripts/z_setup.sh --system-packages --api --yara --snapml   # checks arch/NNPA, installs, runs tests
-python scripts/fetch_ember2024.py --out /data/ember2024  # or copy the extracted files from another machine
-export EMBER2024_DIR=/data/ember2024
-scripts/train_all.sh                                      # full pipeline -> configs/serving.s390x.yaml
-python -m silkscan.api --config configs/api.yaml            # set serving: configs/serving.s390x.yaml first
+    python3-yara cmake g++ make git
+scripts/z_setup.sh --system-packages --api --yara --snapml   # checks arch/NNPA, installs, runs the tests
+source .venv/bin/activate
+python scripts/check_parity.py --serving configs/serving.yaml \
+    --records work/z_transfer/parity/records.jsonl --expected work/z_transfer/parity/expected.jsonl
+export SILKSCAN_API_KEYS=$(python3 -c "import secrets; print(secrets.token_hex(32))")
+python -m silkscan.api --config configs/api.yaml          # 127.0.0.1:8090
 ```
 
-- **Dependencies:** PyPI has no s390x wheels for numpy, scipy, scikit-learn, LightGBM or yara-python. `--system-packages` uses the distribution's packages, so only LightGBM is compiled (needs `cmake`, `g++`, `make`). On s390x, `z_setup.sh` installs only the parts of `thrember` that its feature extractor needs.
+`check_parity` must print `PARITY OK`: the model then gives the same verdicts as on the machine it was trained on.
+
+**Retrain on the full dataset** (about 10 GB RAM and 50 GB disk; run it in `tmux`):
+
+```bash
+python scripts/fetch_ember2024.py --out /data/ember2024  # ~32 GB extracted; or copy the files from another machine
+export EMBER2024_DIR=/data/ember2024
+scripts/train_all.sh                                      # full pipeline -> configs/serving.s390x.yaml
+```
+
+Then set `serving: configs/serving.s390x.yaml` in `configs/api.yaml` and restart the API. Until then the API keeps
+serving the included model.
+
+- **Dependencies:** PyPI has no s390x wheels for numpy, scipy, scikit-learn, LightGBM or yara-python. `--system-packages` uses the distribution's packages, so only LightGBM is compiled from source (needs `cmake`, `g++`, `make`; takes a few minutes). If that fails on Ubuntu 24.04 with Python 3.12, install the prebuilt wheel and run `z_setup.sh` again: `.venv/bin/pip install work/z_transfer/wheels/lightgbm-4.7.0-py3-none-linux_s390x.whl`. On s390x, `z_setup.sh` installs only the parts of `thrember` that its feature extractor needs.
 - **Rehearsal on x86_64:** `scripts/docker_s390x.sh` builds the same install for `linux/s390x` under QEMU, runs the tests and checks parity with the trained model (see the script header for the one-time QEMU setup). Emulation is slow and has no NNPA.
-- **Memory:** full Win64 training needs about 10 GB of RAM. With less, set `data.train_fraction` below 1.0.
-- **Snap ML backends:** `train_all.sh` uses `snapml-nnpa` when NNPA (z16 or later) and Snap ML are available, after selecting a separate validation threshold for it.
+- **Memory:** full Win64 training needs about 10 GB of RAM. With less, set `data.train_fraction` below 1.0. Serving with 4 workers uses about 1.6 GB; lower `workers` in `configs/api.yaml` if needed.
+- **Snap ML backends:** `train_all.sh` uses `snapml-nnpa` when NNPA (z16 or later) and Snap ML are available, after selecting a separate validation threshold for it. If Snap ML cannot be installed, everything runs with `lightgbm`.
 - **Byte order:** arrays on disk are little-endian on every platform, so caches and models move between x86_64 and s390x unchanged. scikit-learn's feature hashing (used by thrember for imports, exports, sections and the Rich header) depends on byte order; on big-endian machines `silkscan.features.hashing` makes it hash like x86, so a model trained on either platform sees the same columns.
 - **Data path:** run directories store `${EMBER2024_DIR}` rather than a machine-specific path. Serving does not need the data.
 
