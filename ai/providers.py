@@ -7,6 +7,7 @@ the chat request. Do not treat a Cloud API key as a pre-issued bearer token.
 from __future__ import annotations
 
 import json
+import re
 from abc import ABC, abstractmethod
 from typing import Any, Dict
 
@@ -135,8 +136,9 @@ class LocalLLMProvider(AIProvider):
                         {"role": "user", "content": user_msg},
                     ],
                     "temperature": 0.1,
-                    "max_tokens": 700,
+                    "max_tokens": 450,
                     "stream": False,
+                    "response_format": {"type": "json_object"},
                 },
             )
             response.raise_for_status()
@@ -221,30 +223,80 @@ def _estimate_mitre(classification: str) -> list[str]:
 
 
 def _try_parse_json(text: str) -> Dict[str, Any]:
-    """Extract structured fields from model output with safe defaults."""
-    try:
-        start = text.index("{")
-        end = text.rindex("}") + 1
-        data = json.loads(text[start : end])
-        recommendation = data.get("recommendation", "MONITOR")
-        if recommendation not in {"ALLOW", "MONITOR", "BLOCK"}:
-            recommendation = "MONITOR"
+    """Parse structured model output without leaking malformed JSON to the UI."""
+    candidate = text.strip()
+    if not candidate:
         return {
-            "summary": str(data.get("summary", text[:500])),
-            "reasoning": data.get("reasoning", [text[:1000]]),
-            "recommendation": recommendation,
-            "mitre": data.get("mitre", []),
-            "mitigations": data.get("mitigations", []),
-        }
-    except (ValueError, json.JSONDecodeError):
-        return {
-            "summary": text[:500] or "Granite returned an empty response.",
-            "reasoning": [text[:1000]] if text else [],
+            "summary": "The AI provider returned an empty response.",
+            "reasoning": ["No usable model response was received."],
             "recommendation": "MONITOR",
             "mitre": [],
             "mitigations": [],
         }
 
+    # Some small instruction models occasionally wrap JSON in Markdown fences.
+    if candidate.startswith("```"):
+        candidate = re.sub(r"^\`\`\`(?:json)?\s*|\s*\`\`\`$", "", candidate, flags=re.IGNORECASE)
+
+    start = candidate.find("{")
+    end = candidate.rfind("}")
+    if start >= 0 and end > start:
+        candidate = candidate[start : end + 1]
+
+    data: Dict[str, Any] | None = None
+    try:
+        parsed = json.loads(candidate)
+        if isinstance(parsed, dict):
+            data = parsed
+    except json.JSONDecodeError:
+        # Harmless repair for a common model mistake: trailing commas.
+        repaired = re.sub(r",\s*([}\]])", r"\1", candidate)
+        try:
+            parsed = json.loads(repaired)
+            if isinstance(parsed, dict):
+                data = parsed
+        except json.JSONDecodeError:
+            data = None
+
+    if data is None:
+        return {
+            "summary": "Local AI returned malformed structured output; review the IOC evidence and risk score directly.",
+            "reasoning": [
+                "The generated response did not conform to the required JSON format.",
+                "The displayed decision should rely on the validated risk score and threat-intelligence evidence.",
+            ],
+            "recommendation": "MONITOR",
+            "mitre": [],
+            "mitigations": [],
+        }
+
+    recommendation = data.get("recommendation", "MONITOR")
+    if not isinstance(recommendation, str) or recommendation.strip().upper() not in {"ALLOW", "MONITOR", "BLOCK"}:
+        recommendation = "MONITOR"
+    else:
+        recommendation = recommendation.strip().upper()
+
+    reasoning = data.get("reasoning", [])
+    if not isinstance(reasoning, list):
+        reasoning = [str(reasoning)] if reasoning else []
+    mitigations = data.get("mitigations", [])
+    if not isinstance(mitigations, list):
+        mitigations = [str(mitigations)] if mitigations else []
+    mitre = data.get("mitre", [])
+    if not isinstance(mitre, list):
+        mitre = []
+
+    summary = data.get("summary", "")
+    if not isinstance(summary, str) or not summary.strip():
+        summary = "AI assessment generated; review the evidence and recommendation."
+
+    return {
+        "summary": summary.strip()[:1000],
+        "reasoning": [str(item)[:500] for item in reasoning[:5]],
+        "recommendation": recommendation,
+        "mitre": [str(item) for item in mitre[:10]],
+        "mitigations": [str(item)[:500] for item in mitigations[:5]],
+    }
 
 def get_provider() -> AIProvider:
     """Return Granite only when all required watsonx settings are present."""
