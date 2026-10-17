@@ -275,17 +275,37 @@ async function loadSystemTelemetry() {
         $("hw-os").textContent = `${data.system} ${data.release || ""}`;
         $("hw-cpu").textContent = `${data.cpu_count} vCPUs`;
         $("hw-vendor").textContent = data.vendor || "—";
-        $("hw-hypervisor").textContent = data.hypervisor || (data.is_linuxone ? "z/VM 7.3.0" : "None");
+        $("hw-hypervisor").textContent = data.hypervisor || "Not reported";
         $("hw-mem").textContent = data.memory_total_mb ? `${data.memory_total_mb} MB` : "Available";
 
         const banner = $("hw-linuxone-banner");
         if (data.is_linuxone) {
-            banner.innerHTML = `<span class="hw-banner-icon">🛡️</span><span><strong>Verified IBM LinuxONE Host:</strong> Enterprise s390x architecture with hardware-accelerated security.</span>`;
+            banner.innerHTML = `<span class="hw-banner-icon">🛡️</span><span><strong>Host platform:</strong> IBM LinuxONE (s390x), as reported by the API.</span>`;
         } else {
-            banner.innerHTML = `<span class="hw-banner-icon">💻</span><span>Development Environment: Ready for IBM LinuxONE container/native deployment.</span>`;
+            banner.innerHTML = `<span class="hw-banner-icon">💻</span><span>Development environment: ${escapeHtml(data.platform_name || `${data.system} (${data.machine})`)}.</span>`;
         }
     } catch {
         /* silently ignore if endpoint is unreachable */
+    }
+}
+
+async function loadSystemStatus() {
+    const status = $("system-status");
+    const label = status?.querySelector(".status-text");
+    if (!status || !label) return;
+
+    try {
+        const res = await fetch(`${API}/health`);
+        if (!res.ok) throw new Error(`Health check returned ${res.status}`);
+        status.classList.remove("checking", "offline");
+        status.classList.add("online");
+        label.textContent = "System Online";
+        status.title = "SilkShield API health check succeeded";
+    } catch {
+        status.classList.remove("checking", "online");
+        status.classList.add("offline");
+        label.textContent = "API Unavailable";
+        status.title = "SilkShield API health check failed";
     }
 }
 
@@ -360,6 +380,7 @@ document.addEventListener("keydown", (e) => {
 document.addEventListener("DOMContentLoaded", () => {
     loadDemoIOCs();
     loadSystemTelemetry();
+    loadSystemStatus();
     initModal();
     $("ioc-input")?.focus();
 });

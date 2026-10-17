@@ -63,7 +63,7 @@
 ## Phase 7 --- Final
 
 -   [x] end-to-end API demo on the target environment (live VirusTotal and local Granite)
--   [ ] dashboard walkthrough on LinuxONE through the PuTTY SSH tunnel
+-   [x] dashboard walkthrough on LinuxONE through the PuTTY SSH tunnel (user-provided screenshot)
 -   [x] README setup, demo, and test instructions
 -   [x] architecture overview (ARCHITECTURE.md)
 -   [x] judging criteria documented (JUDGING_ALIGNMENT.md)
