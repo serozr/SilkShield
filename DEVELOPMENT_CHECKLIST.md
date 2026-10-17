@@ -55,7 +55,7 @@
 -   [x] historical benchmark report present (docs/BENCHMARK_RESULTS.md; rerun on target before using as acceptance evidence)
 -   [x] verify LinuxONE host health/telemetry and `/analyze` with local Granite (reported host revision `ec0fdbc`; user-provided terminal output)
 -   [x] install Docker Engine and Compose on s390x; `hello-world` ran successfully
--   [ ] build and run the Docker Compose deployment on LinuxONE (initial build failed because the image lacked CMake; Dockerfile now includes it, rebuild pending)
+-   [ ] build and run the Docker Compose deployment on LinuxONE (XGBoost passed CMake metadata; SciPy source build then failed because gfortran/BLAS dependencies were missing; Dockerfile now includes them, rebuild pending)
 -   [ ] verify a live VirusTotal lookup end-to-end on LinuxONE (the reported response was `virustotal_cached`, so it does not prove a live lookup)
 -   [ ] rerun ML inference and benchmark on the target s390x host
 
