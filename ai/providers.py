@@ -15,7 +15,7 @@ import httpx
 from app.config import settings
 
 WATSONX_API_VERSION = "2025-10-25"
-IAM_TOKEN_URL = "https://iam.cloud.ibm.com/identity/token"
+IAM_TOKEN_URL = "https://iam.cloud.ibm.com/oidc/token"
 
 
 class AIProvider(ABC):
@@ -81,7 +81,7 @@ class GraniteProvider(AIProvider):
                         {"role": "user", "content": user_msg},
                     ],
                     "temperature": 0.2,
-                    "max_tokens": 800,
+                    "max_completion_tokens": 800,
                 },
             )
             response.raise_for_status()
@@ -192,8 +192,20 @@ def _try_parse_json(text: str) -> Dict[str, Any]:
 
 def get_provider() -> AIProvider:
     """Return Granite only when all required watsonx settings are present."""
-    if settings.ai_provider.lower() == "granite":
+    mode = settings.ai_provider.strip().lower()
+    if mode == "granite":
         provider = GraniteProvider()
-        if provider.is_available:
-            return provider
+        if not provider.is_available:
+            missing = []
+            if not provider.base_url:
+                missing.append("GRANITE_API_URL")
+            if not provider.api_key:
+                missing.append("GRANITE_API_KEY")
+            if not provider.project_id:
+                missing.append("WATSONX_PROJECT_ID")
+            raise RuntimeError(
+                "AI_PROVIDER=granite but required settings are missing: "
+                + ", ".join(missing)
+            )
+        return provider
     return DemoFallbackProvider()
