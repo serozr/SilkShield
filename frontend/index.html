@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/style.css?v=team-brand-1">
+    <link rel="stylesheet" href="/static/style.css?v=private-hash-search-1">
 </head>
 <body>
     <a class="skip-link" href="#main-content">Skip to analysis</a>
@@ -50,30 +50,61 @@
 
         <!-- IOC Input Section -->
         <section class="input-section">
-            <div class="input-card glass">
-                <h2 class="section-label">Analyze Indicator of Compromise</h2>
-                <div class="input-row">
-                    <div class="input-wrapper">
-                        <input 
-                            type="text" 
-                            id="ioc-input" 
-                            class="ioc-input" 
-                            placeholder="Domain, URL, IP address, or file hash"
-                            aria-label="Indicator of compromise to analyze"
-                            autocomplete="off"
-                            spellcheck="false"
-                        >
-                        <div class="input-glow"></div>
+            <div class="input-card glass search-card">
+                <div class="search-heading">
+                    <div>
+                        <p class="search-eyebrow">THREAT INTELLIGENCE WORKSPACE</p>
+                        <h2 class="section-label">Investigate an indicator or file</h2>
                     </div>
-                    <button id="analyze-btn" class="analyze-btn" onclick="analyzeIOC()">
-                        <span class="btn-text">ANALYZE</span>
-                        <span class="btn-loader" id="btn-loader"></span>
+                    <span class="search-protocol"><span class="protocol-dot"></span> Evidence-led analysis</span>
+                </div>
+
+                <div class="search-tabs" role="tablist" aria-label="Analysis method">
+                    <button class="search-tab active" id="ioc-tab" type="button" role="tab" aria-selected="true" aria-controls="ioc-panel" data-mode="ioc">
+                        <span class="tab-symbol">⌕</span><span>IOC lookup</span>
+                        <small>Domain · URL · IP · hash</small>
+                    </button>
+                    <button class="search-tab" id="file-tab" type="button" role="tab" aria-selected="false" aria-controls="file-panel" data-mode="file">
+                        <span class="tab-symbol">◈</span><span>File reputation</span>
+                        <small>Private SHA-256 lookup</small>
                     </button>
                 </div>
-                <div class="demo-iocs" id="demo-iocs">
-                    <span class="demo-label">Try an IOC:</span>
+
+                <div class="search-panel" id="ioc-panel" role="tabpanel" aria-labelledby="ioc-tab">
+                    <label class="search-label" for="ioc-input">Indicator of compromise</label>
+                    <div class="input-row">
+                        <div class="input-wrapper">
+                            <span class="search-glyph" aria-hidden="true">⌕</span>
+                            <input type="text" id="ioc-input" class="ioc-input" placeholder="Paste a domain, URL, IP address, or hash" aria-label="Indicator of compromise to analyze" autocomplete="off" spellcheck="false">
+                            <span class="detected-type" id="detected-type">AUTO DETECT</span>
+                            <div class="input-glow"></div>
+                        </div>
+                        <button id="analyze-btn" class="analyze-btn" type="button" onclick="analyzeIOC()">
+                            <span class="btn-text">ANALYZE IOC <span aria-hidden="true">→</span></span>
+                            <span class="btn-loader" id="btn-loader"></span>
+                        </button>
+                    </div>
+                    <div class="demo-iocs" id="demo-iocs">
+                        <span class="demo-label">Quick examples</span>
+                    </div>
                 </div>
-                <p class="input-note">Analysis uses the configured intelligence sources. Check each result’s source; low risk does not prove an indicator is safe.</p>
+
+                <div class="search-panel file-panel hidden" id="file-panel" role="tabpanel" aria-labelledby="file-tab">
+                    <label class="search-label" for="sample-file">Local file hash lookup</label>
+                    <input id="sample-file" class="visually-hidden" type="file" aria-label="Choose a file to calculate its SHA-256 hash">
+                    <button class="file-dropzone" id="file-dropzone" type="button" aria-describedby="file-privacy-note">
+                        <span class="file-drop-icon" aria-hidden="true">↑</span>
+                        <span class="file-drop-copy"><strong id="file-name">Choose a file or drop it here</strong><small id="file-meta">SHA-256 reputation lookup · no execution or upload</small></span>
+                        <span class="file-browse">Browse files</span>
+                    </button>
+                    <div class="file-actions">
+                        <p class="file-privacy" id="file-privacy-note"><span aria-hidden="true">◉</span> Files up to 50 MB are hashed locally. Only the SHA-256 hash is sent; this is reputation lookup, not antivirus or detonation scanning.</p>
+                        <button id="scan-file-btn" class="analyze-btn" type="button" disabled><span class="btn-text">CALCULATE & LOOK UP →</span><span class="btn-loader"></span></button>
+                    </div>
+                    <p class="file-hash-result hidden" id="file-hash-result"></p>
+                </div>
+
+                <p class="input-note">Results depend on available intelligence. A clean or low-risk result is not proof that an indicator or file is safe.</p>
             </div>
         </section>
 
@@ -292,6 +323,6 @@
         <p>SilkShield &mdash; Real-Time AI for Critical Security Decisions</p>
     </footer>
 
-    <script src="/static/app.js?v=team-brand-1"></script>
+    <script src="/static/app.js?v=private-hash-search-1"></script>
 </body>
 </html>

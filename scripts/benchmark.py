@@ -70,7 +70,7 @@ BENCHMARK_IOCS = [
     {"ioc": "http://fake-microsoft-office365-login.net/auth", "type": "url"},
 
     # Hashes (10)
-    {"ioc": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "type": "hash"},
+    {"ioc": "7b5bda1922a562be4cf5fc9203a83ed94323c462dc0e22fd8af440a0423079e6", "type": "hash"},
     {"ioc": "44d88612fea8a8f36de82e1278abb02f", "type": "hash"},
     {"ioc": "275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f", "type": "hash"},
     {"ioc": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef", "type": "hash"},

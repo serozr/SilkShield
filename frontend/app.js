@@ -3,6 +3,8 @@
    ═══════════════════════════════════════════════════════════════ */
 
 const API = window.location.origin;
+const MAX_HASH_FILE_SIZE = 50 * 1024 * 1024;
+let selectedFile = null;
 
 // ─── State Management ──────────────────────────────────────── //
 
@@ -29,7 +31,9 @@ async function loadDemoIOCs() {
             chip.textContent = item.ioc;
             chip.title = item.description;
             chip.onclick = () => {
+                setSearchMode("ioc");
                 $("ioc-input").value = item.ioc;
+                updateDetectedType();
                 analyzeIOC();
             };
             container.appendChild(chip);
@@ -43,16 +47,17 @@ async function loadDemoIOCs() {
 
 let lastIOC = "";
 
-async function analyzeIOC() {
+async function analyzeIOC(iocOverride = null, actionButton = $("analyze-btn")) {
     const input = $("ioc-input");
-    const ioc = input.value.trim();
+    const ioc = String(iocOverride ?? input.value).trim();
     if (!ioc) {
         input.focus();
         return;
     }
 
     lastIOC = ioc;
-    const btn = $("analyze-btn");
+    const btn = actionButton;
+    if (iocOverride !== null) input.value = ioc;
     btn.classList.add("loading");
     btn.disabled = true;
 
@@ -78,13 +83,120 @@ async function analyzeIOC() {
         const data = await res.json();
         renderResult(data);
         showState("result-state");
+        return true;
     } catch (err) {
         $("error-message").textContent = err.message;
         showState("error-state");
+        return false;
     } finally {
         btn.classList.remove("loading");
         btn.disabled = false;
     }
+}
+
+function setSearchMode(mode) {
+    const isFileMode = mode === "file";
+    $("ioc-tab").classList.toggle("active", !isFileMode);
+    $("file-tab").classList.toggle("active", isFileMode);
+    $("ioc-tab").setAttribute("aria-selected", String(!isFileMode));
+    $("file-tab").setAttribute("aria-selected", String(isFileMode));
+    $("ioc-panel").classList.toggle("hidden", isFileMode);
+    $("file-panel").classList.toggle("hidden", !isFileMode);
+    if (isFileMode) $("file-dropzone").focus();
+    else $("ioc-input").focus();
+}
+
+function detectInputType(value) {
+    const ioc = value.trim();
+    if (!ioc) return "AUTO DETECT";
+    if (/^[a-f\d]{32}$|^[a-f\d]{40}$|^[a-f\d]{64}$/i.test(ioc)) return "FILE HASH";
+    if (/^https?:\/\//i.test(ioc)) return "URL";
+    if (/^(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)$/.test(ioc) || ioc.includes(":")) return "IP ADDRESS";
+    return "DOMAIN";
+}
+
+function updateDetectedType() {
+    const label = $("detected-type");
+    if (label) label.textContent = detectInputType($("ioc-input").value);
+}
+
+function formatFileSize(bytes) {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+async function hashSelectedFile() {
+    const file = selectedFile;
+    const button = $("scan-file-btn");
+    const hashOutput = $("file-hash-result");
+    if (!file) return;
+    if (file.size > MAX_HASH_FILE_SIZE) {
+        hashOutput.textContent = "This file exceeds the 50 MB browser hashing limit. Paste a known hash instead.";
+        hashOutput.classList.remove("hidden");
+        return;
+    }
+    if (!window.crypto?.subtle) {
+        hashOutput.textContent = "Secure browser hashing is unavailable here. Open this page over HTTPS or enter a SHA-256 hash manually.";
+        hashOutput.classList.remove("hidden");
+        return;
+    }
+
+    button.disabled = true;
+    button.classList.add("loading");
+    $("file-meta").textContent = `Calculating SHA-256 · ${formatFileSize(file.size)}`;
+    hashOutput.classList.add("hidden");
+    try {
+        const bytes = await file.arrayBuffer();
+        const digest = await window.crypto.subtle.digest("SHA-256", bytes);
+        const hash = Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
+        $("ioc-input").value = hash;
+        hashOutput.textContent = `SHA-256 · ${hash} · Looking up reputation…`;
+        hashOutput.classList.remove("hidden");
+        const completed = await analyzeIOC(hash, button);
+        hashOutput.textContent = completed
+            ? `SHA-256 · ${hash} · Reputation result shown below; check its intelligence source.`
+            : `SHA-256 · ${hash} · Lookup failed. Review the error above before retrying.`;
+    } catch (err) {
+        hashOutput.textContent = `Could not calculate the file hash: ${err.message}`;
+        hashOutput.classList.remove("hidden");
+        button.disabled = false;
+        button.classList.remove("loading");
+    } finally {
+        button.disabled = false;
+        button.classList.remove("loading");
+        $("file-meta").textContent = `${formatFileSize(file.size)} · file stays on this device`;
+    }
+}
+
+function initSearchControls() {
+    $("ioc-tab")?.addEventListener("click", () => setSearchMode("ioc"));
+    $("file-tab")?.addEventListener("click", () => setSearchMode("file"));
+    $("ioc-input")?.addEventListener("input", updateDetectedType);
+    const fileInput = $("sample-file");
+    const dropzone = $("file-dropzone");
+
+    const acceptFile = (file) => {
+        if (!file) return;
+        selectedFile = file;
+        $("file-name").textContent = file.name;
+        $("file-meta").textContent = `${formatFileSize(file.size)} · ready for local SHA-256 calculation`;
+        $("scan-file-btn").disabled = false;
+        $("file-hash-result").classList.add("hidden");
+    };
+
+    dropzone?.addEventListener("click", () => fileInput?.click());
+    fileInput?.addEventListener("change", () => acceptFile(fileInput.files?.[0]));
+    ["dragenter", "dragover"].forEach((eventName) => dropzone?.addEventListener(eventName, (event) => {
+        event.preventDefault();
+        dropzone.classList.add("dragging");
+    }));
+    ["dragleave", "drop"].forEach((eventName) => dropzone?.addEventListener(eventName, (event) => {
+        event.preventDefault();
+        dropzone.classList.remove("dragging");
+    }));
+    dropzone?.addEventListener("drop", (event) => acceptFile(event.dataTransfer?.files?.[0]));
+    $("scan-file-btn")?.addEventListener("click", hashSelectedFile);
 }
 
 function retryAnalysis() {
@@ -391,6 +503,7 @@ document.addEventListener("keydown", (e) => {
 
 // ─── Init ──────────────────────────────────────────────────── //
 document.addEventListener("DOMContentLoaded", () => {
+    initSearchControls();
     loadDemoIOCs();
     loadSystemTelemetry();
     loadSystemStatus();

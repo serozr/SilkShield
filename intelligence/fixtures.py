@@ -62,7 +62,10 @@ _add(NormalizedIntelligence(
 
 # Malware hash — critical risk
 _add(NormalizedIntelligence(
-    ioc="e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    # SHA-256 of a harmless text label used only as a synthetic demo indicator.
+    # Do not use the well-known empty-file hash here: a real empty file must not
+    # appear malicious in the file reputation workflow.
+    ioc="7b5bda1922a562be4cf5fc9203a83ed94323c462dc0e22fd8af440a0423079e6",
     type="hash",
     detections=45,
     total_engines=72,
@@ -133,8 +136,8 @@ def get_demo_iocs() -> list[dict]:
          "description": "Known phishing domain (HIGH risk)"},
         {"ioc": "185.220.101.1", "type": "ip",
          "description": "Suspicious IP address (CRITICAL risk)"},
-        {"ioc": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-         "type": "hash", "description": "Malware hash — SHA-256 (CRITICAL risk)"},
+        {"ioc": "7b5bda1922a562be4cf5fc9203a83ed94323c462dc0e22fd8af440a0423079e6",
+         "type": "hash", "description": "Synthetic demo hash — SHA-256 (fixture only)"},
         {"ioc": "http://malicious-login.com/signin", "type": "url",
          "description": "Phishing URL (HIGH risk)"},
         {"ioc": "google.com", "type": "domain",

@@ -43,6 +43,12 @@ signals into an explainable security decision.**
 -   IP address
 -   File hash
 
+The dashboard also accepts a local file for a **SHA-256 reputation lookup**.
+Hashing happens in the browser (up to 50 MB); the file itself is not uploaded
+or executed. This does not replace antivirus scanning or sandbox detonation.
+The reputation result depends on the configured intelligence source and is
+labelled in the response metadata.
+
 ### MVP Outputs
 
 -   Threat score: 0--100

@@ -80,9 +80,9 @@ From a second SSH session, test:
 ```bash
 curl -s -X POST http://127.0.0.1:8000/analyze \
   -H "Content-Type: application/json" \
-  -d '{"ioc":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","type":"hash"}'
+  -d '{"ioc":"7b5bda1922a562be4cf5fc9203a83ed94323c462dc0e22fd8af440a0423079e6","type":"hash"}'
 ```
 
 In the response, check `metadata.ai_provider` equals `granite`. If the API call fails, SilkShield reports an AI error rather than silently claiming the deterministic fallback was a live LLM.
 
-The hash in this example is simply the repository's demo fixture input; for an honest demo, make sure the returned `intelligence_source` says `virustotal_live` before claiming the threat intelligence is live.
+The hash in this example is a synthetic repository demo fixture input, not a real malware sample. For an honest demo, make sure the returned `intelligence_source` says `virustotal_live` before claiming the threat intelligence is live.
