@@ -242,6 +242,7 @@
                         <h3>AI Security Analysis</h3>
                     </div>
                     <div class="ai-summary" id="ai-summary">—</div>
+                    <h4 class="reasoning-heading hidden" id="reasoning-heading">Why this assessment</h4>
                     <div class="ai-reasoning" id="ai-reasoning"></div>
                 </div>
 
@@ -277,6 +278,31 @@
                     </div>
                 </div>
             </div>
+
+            <section class="analyst-chat glass" aria-labelledby="analyst-chat-title">
+                <div class="chat-heading">
+                    <div class="chat-title-wrap">
+                        <span class="chat-avatar" aria-hidden="true">AI</span>
+                        <div>
+                            <h3 id="analyst-chat-title">Ask the AI Analyst</h3>
+                            <p>Follow up on this report; answers are grounded in its evidence.</p>
+                        </div>
+                    </div>
+                    <span id="chat-provider-status" class="chat-provider-status">Checking Granite…</span>
+                </div>
+                <div class="chat-prompts" aria-label="Suggested questions">
+                    <button type="button" class="chat-prompt" data-question="Bu risk puanını hangi kanıtlar belirledi?">Why this score?</button>
+                    <button type="button" class="chat-prompt" data-question="Kanıtları basitçe açıklar mısın?">Explain the evidence</button>
+                    <button type="button" class="chat-prompt" data-question="Savunma ekibi olarak ilk ne yapmalıyız?">What should we do next?</button>
+                </div>
+                <div class="chat-thread" id="chat-thread" role="log" aria-live="polite" aria-relevant="additions text"></div>
+                <form class="chat-compose" id="chat-form">
+                    <label class="visually-hidden" for="chat-input">Ask a follow-up question about this analysis</label>
+                    <textarea id="chat-input" rows="2" maxlength="600" placeholder="Ask about the score, evidence, or recommended action…" disabled></textarea>
+                    <button id="chat-send" class="chat-send" type="submit" disabled>Send <span aria-hidden="true">↑</span></button>
+                </form>
+                <p class="chat-disclaimer">Only this report and your questions go to the configured Granite provider. AI guidance can be wrong; it cannot change the decision or run another lookup.</p>
+            </section>
 
             <!-- Metadata -->
             <div class="metadata-bar glass" id="metadata-bar">

@@ -15,12 +15,15 @@ import os
 
 from app.config import settings
 from app.schemas import (
+    AnalystChatRequest,
+    AnalystChatResponse,
     AnalyzeRequest,
     AnalyzeResponse,
     HealthResponse,
     Recommendation,
     RiskLevel,
 )
+from ai.prompts import CHAT_ASSISTANT_PROMPT
 from intelligence.ioc import detect_ioc_type, validate_ioc
 from intelligence.virustotal import (
     VirusTotalClient,
@@ -34,6 +37,7 @@ from intelligence.cache import cache_key, get_cached, set_cached
 from intelligence.fixtures import get_demo_iocs, get_fixture
 from ml.predict import predict
 from ai.analyst import analyze_threat
+from ai.providers import get_provider
 from app.telemetry import get_system_telemetry
 
 # ─── App ────────────────────────────────────────────────────── #
@@ -107,6 +111,7 @@ async def analyze(request: AnalyzeRequest):
     ioc_type = (
         request.type.value if request.type else detect_ioc_type(ioc).value
     )
+
 
     # 2 — intelligence (cache → live → fixture → empty)
     key = cache_key(ioc, ioc_type)
@@ -228,6 +233,7 @@ async def analyze(request: AnalyzeRequest):
         confidence=ml["confidence"],
         evidence=ml["evidence"],
         ai_analysis=ai_summary,
+        reasoning=ai.get("reasoning", []),
         recommendation=Recommendation(rec),
         mitre=ai.get("mitre", []),
         mitigations=ai.get("mitigations", []),
@@ -240,6 +246,43 @@ async def analyze(request: AnalyzeRequest):
             "is_linuxone": get_system_telemetry()["is_linuxone"],
         },
     )
+
+
+@app.post("/chat", response_model=AnalystChatResponse)
+async def chat_about_analysis(request: AnalystChatRequest):
+    """Answer a bounded follow-up using the current report as grounding."""
+    if settings.ai_provider.strip().lower() not in {"local", "granite"}:
+        raise HTTPException(
+            status_code=503,
+            detail="Analyst chat requires a configured Granite provider (local or watsonx).",
+        )
+
+    try:
+        provider = get_provider()
+        result = await provider.analyze(
+            {
+                "current_report": request.analysis.model_dump(mode="json"),
+                "conversation_history": [turn.model_dump() for turn in request.history],
+                "question": request.question.strip(),
+            },
+            CHAT_ASSISTANT_PROMPT,
+        )
+    except Exception:
+        # Avoid returning provider details, which can include infrastructure
+        # information. The browser already has the analysis report to review.
+        raise HTTPException(
+            status_code=502,
+            detail="Granite is temporarily unavailable. Review the report and try again shortly.",
+        ) from None
+
+    answer = result.get("summary")
+    provider_name = result.get("provider", "unknown")
+    if not isinstance(answer, str) or not answer.strip() or provider_name in {"error", "demo_fallback"}:
+        raise HTTPException(
+            status_code=502,
+            detail="Granite returned no usable analyst response. Review the report and try again.",
+        )
+    return AnalystChatResponse(answer=answer.strip()[:1800], provider=provider_name)
 
 
 @app.get("/")

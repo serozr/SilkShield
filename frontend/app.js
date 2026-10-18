@@ -47,6 +47,8 @@ async function loadDemoIOCs() {
 
 let lastIOC = "";
 let lastResult = null;
+let analystChatMessages = [];
+let analystChatEnabled = false;
 const HISTORY_KEY = "silkshield.analysis-history.v1";
 const HISTORY_LIMIT = 8;
 
@@ -272,10 +274,16 @@ function renderResult(d) {
     $("ai-summary").textContent = d.ai_analysis || "No AI analysis available.";
 
     const reasoning = $("ai-reasoning");
-    reasoning.innerHTML = "";
+    reasoning.replaceChildren();
+    const reasoningItems = (d.reasoning || []).slice(0, 5);
+    $("reasoning-heading")?.classList.toggle("hidden", reasoningItems.length === 0);
+    reasoningItems.forEach((item) => {
+        const point = document.createElement("div");
+        point.className = "reasoning-item";
+        point.textContent = item;
+        reasoning.append(point);
+    });
     const meta = d.metadata || {};
-    // Try to get reasoning from backend — if we add it later
-    // For now, show ai_analysis as the main content
 
     // Evidence
     const evList = $("evidence-list");
@@ -375,6 +383,121 @@ function renderResult(d) {
     $("meta-provider").textContent = `AI: ${meta.ai_provider || "—"}`;
     $("meta-platform").textContent = `Host: ${meta.host_platform || "Standard"}`;
     $("meta-version").textContent = `v${meta.analysis_version || "0.1.0"}`;
+    resetAnalystChat(d);
+}
+
+function appendChatMessage(role, content, extraClass = "") {
+    const thread = $("chat-thread");
+    const message = document.createElement("div");
+    message.className = `chat-message ${role} ${extraClass}`.trim();
+    message.textContent = content;
+    thread.append(message);
+    thread.scrollTop = thread.scrollHeight;
+    return message;
+}
+
+function resetAnalystChat(result) {
+    const thread = $("chat-thread");
+    const input = $("chat-input");
+    const send = $("chat-send");
+    const status = $("chat-provider-status");
+    if (!thread || !input || !send || !status) return;
+
+    analystChatMessages = [];
+    thread.replaceChildren();
+    const provider = result?.metadata?.ai_provider || "";
+    analystChatEnabled = ["local_granite", "granite"].includes(provider);
+    input.disabled = !analystChatEnabled;
+    send.disabled = !analystChatEnabled;
+    document.querySelectorAll(".chat-prompt").forEach((button) => { button.disabled = !analystChatEnabled; });
+    status.textContent = analystChatEnabled ? `Connected · ${provider === "local_granite" ? "Local Granite" : "watsonx Granite"}` : "Granite chat unavailable in this mode";
+    status.className = `chat-provider-status ${analystChatEnabled ? "available" : "unavailable"}`;
+    appendChatMessage(
+        "assistant",
+        analystChatEnabled
+            ? "I can explain the score, evidence, and recommendation in this report. I cannot run a new scan or change its decision."
+            : "Conversational AI requires a configured Granite provider. This analysis is still available above."
+    );
+}
+
+function chatReportContext(result) {
+    return {
+        ioc: result.ioc,
+        type: result.type,
+        risk_score: result.risk_score,
+        risk_level: result.risk_level,
+        classification: result.classification,
+        confidence: result.confidence,
+        evidence: result.evidence || [],
+        ai_analysis: result.ai_analysis || "",
+        reasoning: result.reasoning || [],
+        recommendation: result.recommendation,
+        mitre: result.mitre || [],
+        mitigations: result.mitigations || [],
+        intelligence_source: result.metadata?.intelligence_source || "unknown",
+    };
+}
+
+async function sendAnalystQuestion(rawQuestion) {
+    const input = $("chat-input");
+    const send = $("chat-send");
+    const question = String(rawQuestion ?? input.value).trim();
+    if (!question || !lastResult || !analystChatEnabled || question.length > 600) return;
+
+    const previousTurns = analystChatMessages.slice(-8);
+    analystChatMessages.push({ role: "user", content: question });
+    appendChatMessage("user", question);
+    input.value = "";
+    input.disabled = true;
+    send.disabled = true;
+    document.querySelectorAll(".chat-prompt").forEach((button) => { button.disabled = true; });
+    const pending = appendChatMessage("assistant", "Granite is reviewing the report…", "pending");
+
+    try {
+        const response = await fetch(`${API}/chat`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                analysis: chatReportContext(lastResult),
+                question,
+                history: previousTurns,
+            }),
+        });
+        const data = await response.json().catch(() => null);
+        if (!response.ok) {
+            const detail = typeof data?.detail === "string" ? data.detail : `Chat request failed (${response.status}).`;
+            throw new Error(detail);
+        }
+        pending.remove();
+        const answer = String(data?.answer || "Granite returned an empty answer.");
+        analystChatMessages.push({ role: "assistant", content: answer });
+        analystChatMessages = analystChatMessages.slice(-8);
+        appendChatMessage("assistant", answer);
+    } catch (error) {
+        pending.remove();
+        appendChatMessage("assistant", `I couldn't reach the analyst: ${error.message}`, "chat-error");
+    } finally {
+        input.disabled = !analystChatEnabled;
+        send.disabled = !analystChatEnabled;
+        document.querySelectorAll(".chat-prompt").forEach((button) => { button.disabled = !analystChatEnabled; });
+        if (analystChatEnabled) input.focus();
+    }
+}
+
+function initAnalystChat() {
+    $("chat-form")?.addEventListener("submit", (event) => {
+        event.preventDefault();
+        sendAnalystQuestion();
+    });
+    $("chat-input")?.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" && !event.shiftKey) {
+            event.preventDefault();
+            sendAnalystQuestion();
+        }
+    });
+    document.querySelectorAll(".chat-prompt").forEach((button) => {
+        button.addEventListener("click", () => sendAnalystQuestion(button.dataset.question));
+    });
 }
 
 // ─── Local history and report actions ──────────────────────── //
@@ -668,6 +791,7 @@ document.addEventListener("keydown", (e) => {
 document.addEventListener("DOMContentLoaded", () => {
     initSearchControls();
     initReportActions();
+    initAnalystChat();
     loadDemoIOCs();
     loadSystemTelemetry();
     loadSystemStatus();

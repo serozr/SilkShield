@@ -43,18 +43,6 @@ signals into an explainable security decision.**
 -   IP address
 -   File hash
 
-The dashboard also accepts a local file for a **SHA-256 reputation lookup**.
-Hashing happens in the browser (up to 50 MB); the file itself is not uploaded
-or executed. This does not replace antivirus scanning or sandbox detonation.
-The reputation result depends on the configured intelligence source and is
-labelled in the response metadata.
-
-After an analysis, the dashboard can copy the indicator or full JSON result,
-download the report, or print/save it as PDF. It keeps up to eight recent
-lookups in browser-local storage; selecting one performs a fresh lookup. Use
-**Clear history** to remove those local entries. The report labels live,
-cached, demo-fixture, and fallback intelligence separately.
-
 ### MVP Outputs
 
 -   Threat score: 0--100
@@ -66,7 +54,7 @@ cached, demo-fixture, and fallback intelligence separately.
 -   Recommended action
 -   Optional MITRE ATT&CK mapping
 
-### Proposed Stack
+### Implemented Stack
 
 -   Python
 -   FastAPI
@@ -74,8 +62,36 @@ cached, demo-fixture, and fallback intelligence separately.
 -   IBM Granite / compatible GenAI layer
 -   RAG knowledge base
 -   VirusTotal API
--   Streamlit or React frontend
+-   FastAPI-served HTML, CSS, and vanilla JavaScript dashboard
 -   IBM LinuxONE / s390x deployment
+
+### Dashboard features and limits
+
+- **IOC lookup:** enter a domain, URL, IP address, or file hash. The dashboard
+  detects the likely type and sends the indicator to the `/analyze` API.
+- **File reputation:** choose or drop a file up to 50 MB. The browser computes
+  its SHA-256 hash locally and sends only that hash for reputation lookup. The
+  file is neither uploaded nor executed. This is not an antivirus scan or
+  sandbox detonation; it does not inspect file contents.
+- **Analysis report:** copy the indicator or JSON report, download the JSON, or
+  use **Print / Save PDF** to create a shareable report from the browser.
+- **AI Analyst chat:** ask follow-up questions about the current report. Chat is
+  enabled only when local Granite or watsonx Granite is configured. It explains
+  the supplied evidence; it cannot run another lookup or change the score or
+  recommendation. The report context and questions are sent to the configured
+  Granite provider. Chat messages are not saved after the page is reloaded.
+- **Recent analyses:** the last eight successful lookups are kept in this
+  browser's local storage. Selecting one runs a fresh lookup; **Clear history**
+  removes the saved entries. History does not contain uploaded file contents.
+- **Intelligence source:** check the label on every result. SilkShield
+  distinguishes VirusTotal live and cached results, unseen indicators, demo
+  fixtures, rate-limit fallback, and local fallback. A fixture or fallback is
+  not a live threat-intelligence result.
+
+Indicators entered into the dashboard are sent to the configured SilkShield
+API. When VirusTotal is configured, the API may query it with the indicator or
+file hash. Do not submit confidential indicators unless that sharing is
+approved for your environment.
 
 ### Run SilkShield locally
 
@@ -156,15 +172,13 @@ The LLM provides an evidence-grounded explanation; the final action is validated
 
 See [docs/WATSONX_SETUP.md](docs/WATSONX_SETUP.md) for credentials, environment configuration, and a safe connectivity test. The demo provider remains the default until live Granite access is configured.
 
-### Important MVP Principle
+### Demo accuracy
 
-The first milestone is a complete vertical slice:
+Use the dashboard's source label and report metadata when presenting results.
+Synthetic fixtures make the demo repeatable, but must never be described as
+live VirusTotal findings. A low-risk result is not a guarantee that an
+indicator or file is safe.
 
-``` text
-IOC → intelligence → features → model → AI explanation → dashboard
-```
-
-Do not build secondary features until this path works end-to-end.
 
 ### Judging Alignment
 
