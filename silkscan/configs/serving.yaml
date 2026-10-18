@@ -1,0 +1,24 @@
+# Prediction-time configuration for `silkscan predict --serving` and the API.
+run: runs/laptop/20261017-125021-370-471c29b9
+stage2: runs/laptop/20261017-125021-370-471c29b9/stage2/20261017-160452   # remove to disable
+backend: lightgbm          # lightgbm | snapml | snapml-nnpa
+explain_top: 0             # explanations are expensive; request them per call
+max_file_mb: 100
+short_circuit: true        # a deciding pre-check skips parsing and the model
+
+# Checks with needs_raw=false run before parsing; needs_raw=true after it.
+checks:
+  - name: pe_format                # not a PE / unsupported machine -> suspicious (review)
+    params:
+      allowed_machines: [AMD64]
+  - name: hash_list                # deny wins over allow
+    params:
+      deny: [rules/hashes/deny.txt, work/win64-laptop/hashes/known_malicious.npy]
+      allow: rules/hashes/allow.txt
+  - name: yara                     # evidence only; skipped if yara-python is not installed
+    required: false
+    params:
+      rules_dir: rules/yara
+      timeout_s: 5
+      default_severity: medium
+      allow_force: false

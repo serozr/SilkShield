@@ -1,0 +1,334 @@
+{
+  "base_run": "20261017-125021-370-471c29b9",
+  "base_schema_fingerprint": "642c3a6bc3471d86114d6e3a439402c0ccc905026eb5f69c2f24e40e3597b71d",
+  "categories": {
+    "backdoor": {
+      "best_iteration": 251,
+      "enabled": true,
+      "impact": "high",
+      "model": "category_backdoor.txt",
+      "n_train_labelled": 29250,
+      "n_train_pos": 816,
+      "test": {
+        "average_precision": 0.6748097333337757,
+        "n": 9480,
+        "n_flagged": 327,
+        "n_pos": 667,
+        "precision": 0.7920489296636085,
+        "recall": 0.38830584707646176
+      },
+      "threshold": 0.9568999012425314,
+      "validation": {
+        "average_precision": 0.6961973442735002,
+        "n": 7207,
+        "n_flagged": 216,
+        "n_pos": 441,
+        "precision": 0.8009259259259259,
+        "recall": 0.3922902494331066
+      }
+    },
+    "coinminer": {
+      "best_iteration": 49,
+      "enabled": true,
+      "impact": "medium",
+      "model": "category_coinminer.txt",
+      "n_train_labelled": 29250,
+      "n_train_pos": 8860,
+      "test": {
+        "average_precision": 0.9832045318414387,
+        "n": 9480,
+        "n_flagged": 1186,
+        "n_pos": 1265,
+        "precision": 0.9865092748735245,
+        "recall": 0.924901185770751
+      },
+      "threshold": 0.5,
+      "validation": {
+        "average_precision": 0.9982847329245895,
+        "n": 7207,
+        "n_flagged": 2625,
+        "n_pos": 2660,
+        "precision": 0.9961904761904762,
+        "recall": 0.9830827067669173
+      }
+    },
+    "downloader": {
+      "best_iteration": 263,
+      "enabled": true,
+      "impact": "medium",
+      "model": "category_downloader.txt",
+      "n_train_labelled": 29250,
+      "n_train_pos": 1264,
+      "test": {
+        "average_precision": 0.5176912484789968,
+        "n": 9480,
+        "n_flagged": 108,
+        "n_pos": 702,
+        "precision": 0.8148148148148148,
+        "recall": 0.12535612535612536
+      },
+      "threshold": 0.9899624861951513,
+      "validation": {
+        "average_precision": 0.6238206466157836,
+        "n": 7207,
+        "n_flagged": 140,
+        "n_pos": 602,
+        "precision": 0.8,
+        "recall": 0.18604651162790697
+      }
+    },
+    "infector": {
+      "best_iteration": 173,
+      "enabled": true,
+      "impact": "medium",
+      "model": "category_infector.txt",
+      "n_train_labelled": 29250,
+      "n_train_pos": 13848,
+      "test": {
+        "average_precision": 0.9988789598796982,
+        "n": 9480,
+        "n_flagged": 4208,
+        "n_pos": 4277,
+        "precision": 0.999287072243346,
+        "recall": 0.9831657703998129
+      },
+      "threshold": 0.5,
+      "validation": {
+        "average_precision": 0.9974484092667028,
+        "n": 7207,
+        "n_flagged": 1796,
+        "n_pos": 1838,
+        "precision": 0.9994432071269488,
+        "recall": 0.9766050054406964
+      }
+    },
+    "pua": {
+      "best_iteration": 298,
+      "enabled": true,
+      "impact": "low",
+      "model": "category_pua.txt",
+      "n_train_labelled": 29250,
+      "n_train_pos": 1257,
+      "test": {
+        "average_precision": 0.8407922928833709,
+        "n": 9480,
+        "n_flagged": 995,
+        "n_pos": 1160,
+        "precision": 0.807035175879397,
+        "recall": 0.6922413793103448
+      },
+      "threshold": 0.5,
+      "validation": {
+        "average_precision": 0.870267751670514,
+        "n": 7207,
+        "n_flagged": 758,
+        "n_pos": 864,
+        "precision": 0.8284960422163589,
+        "recall": 0.7268518518518519
+      }
+    },
+    "ransomware": {
+      "best_iteration": 299,
+      "enabled": true,
+      "impact": "high",
+      "model": "category_ransomware.txt",
+      "n_train_labelled": 29250,
+      "n_train_pos": 244,
+      "test": {
+        "average_precision": 0.38605297848194453,
+        "n": 9480,
+        "n_flagged": 76,
+        "n_pos": 199,
+        "precision": 0.7105263157894737,
+        "recall": 0.271356783919598
+      },
+      "threshold": 0.876644157904392,
+      "validation": {
+        "average_precision": 0.5669985030878959,
+        "n": 7207,
+        "n_flagged": 91,
+        "n_pos": 196,
+        "precision": 0.8021978021978022,
+        "recall": 0.37244897959183676
+      }
+    },
+    "stealer": {
+      "best_iteration": 266,
+      "enabled": true,
+      "impact": "high",
+      "model": "category_stealer.txt",
+      "n_train_labelled": 29250,
+      "n_train_pos": 3279,
+      "test": {
+        "average_precision": 0.9214949587437351,
+        "n": 9480,
+        "n_flagged": 1483,
+        "n_pos": 1512,
+        "precision": 0.8570465273095077,
+        "recall": 0.8406084656084656
+      },
+      "threshold": 0.5,
+      "validation": {
+        "average_precision": 0.9344494534570981,
+        "n": 7207,
+        "n_flagged": 829,
+        "n_pos": 827,
+        "precision": 0.8685162846803377,
+        "recall": 0.8706166868198307
+      }
+    }
+  },
+  "end_to_end_test": {
+    "benign_with_category": 228,
+    "by_zone": {
+      "malicious": 51095,
+      "suspicious": 6077
+    },
+    "category_precision_on_labelled_flagged": 0.9433441965404863,
+    "flagged": 57172,
+    "flagged_benign": 616,
+    "flagged_malware": 56556,
+    "malware_with_category": 0.582979701534762,
+    "malware_with_family": 0.31812716599476626,
+    "note": "benign_with_category counts false positives that would also get a threat type."
+  },
+  "family": {
+    "best_iteration": 42,
+    "classes": [
+      "expiro",
+      "xmrig",
+      "wacatac",
+      "cosmu",
+      "strelastealer",
+      "bedep",
+      "cobaltstrike",
+      "banload",
+      "beebone",
+      "disco",
+      "pytr",
+      "pyfatget",
+      "disin",
+      "scarletflash",
+      "cerbu",
+      "convagent",
+      "phonzy",
+      "marte",
+      "shelm",
+      "puwaders",
+      "khalesi",
+      "stubo",
+      "alien",
+      "reflo",
+      "metasploit",
+      "other"
+    ],
+    "enabled": true,
+    "model": "family.txt",
+    "n_train_with_family": 53214,
+    "test": {
+      "coverage": 0.3077573988280341,
+      "n": 47271,
+      "precision": 0.7238795710750618,
+      "share_other_or_unseen": 0.5086205072877663,
+      "top1_accuracy_known_families": 0.4533752367831927
+    },
+    "threshold": 0.27231957465866846,
+    "validation": {
+      "coverage": 0.6333480460394527,
+      "n": 29453,
+      "precision": 0.8531146134877238,
+      "share_other_or_unseen": 0.27891895562421487,
+      "top1_accuracy_known_families": 0.7493172615123834
+    }
+  },
+  "id": "20261017-125021-370-471c29b9/stage2/20261017-160452",
+  "label_coverage": {
+    "test": {
+      "malware": 60000,
+      "with_category": 9480,
+      "with_family": 47271
+    },
+    "train": {
+      "malware": 66199,
+      "with_category": 29250,
+      "with_family": 53214
+    },
+    "validation": {
+      "malware": 40000,
+      "with_category": 7207,
+      "with_family": 29453
+    }
+  },
+  "label_fingerprint": "2ee057e127574cd6a267025e809a691b3a03763de45e32738afe7186147a6202",
+  "min_threshold": 0.5,
+  "precision_target": 0.8,
+  "seconds": 329.9,
+  "taxonomy": {
+    "categories": {
+      "backdoor": {
+        "impact": "high",
+        "tags": [
+          "backdoor",
+          "remoteshell",
+          "rootkit",
+          "bypassuac"
+        ]
+      },
+      "coinminer": {
+        "impact": "medium",
+        "tags": [
+          "coinminer"
+        ]
+      },
+      "downloader": {
+        "impact": "medium",
+        "tags": [
+          "downloader",
+          "dropper",
+          "loader",
+          "psdownload"
+        ]
+      },
+      "infector": {
+        "impact": "medium",
+        "tags": [
+          "virus",
+          "worm",
+          "autorun"
+        ]
+      },
+      "pua": {
+        "impact": "low",
+        "tags": [
+          "adware",
+          "riskware",
+          "pua",
+          "hacktool",
+          "gamehack",
+          "cracktool",
+          "joke",
+          "toolbar",
+          "patcher"
+        ]
+      },
+      "ransomware": {
+        "impact": "high",
+        "tags": [
+          "ransom"
+        ]
+      },
+      "stealer": {
+        "impact": "high",
+        "tags": [
+          "passwordstealer",
+          "stealer",
+          "spyware",
+          "keylogger",
+          "banker"
+        ]
+      }
+    },
+    "sha256": "7ee579ac76fd84fdeb88ac59ef2221f14ac9d8e656ee977d0e92998be7e73151",
+    "version": "1"
+  }
+}

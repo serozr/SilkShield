@@ -1,0 +1,56 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+
+# Tooling
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.idea/
+.vscode/
+
+# Data, features, models and generated outputs (machine-specific or large)
+/work/*
+/runs/*
+/cache/
+/data/
+*.npy
+*.npz
+*.jsonl
+*.zip
+*.tar.gz
+
+# API state and logs
+*.db
+*.db-wal
+*.db-shm
+*.log
+
+# Secrets
+.env
+*.key
+*.pem
+
+# Committed exceptions: the served model (configs/serving.yaml), its known-malicious hash list and the
+# parity records used to check a model on another machine. Evaluation outputs stay ignored.
+!/runs/laptop/
+/runs/laptop/*
+!/runs/laptop/20261017-125021-370-471c29b9/
+/runs/laptop/20261017-125021-370-471c29b9/evaluations/
+/runs/laptop/20261017-125021-370-471c29b9/explanations/
+!/work/win64-laptop/
+/work/win64-laptop/*
+!/work/win64-laptop/hashes/
+!/work/win64-laptop/hashes/known_malicious.npy
+!/work/z_transfer/
+/work/z_transfer/*
+!/work/z_transfer/parity/
+!/work/z_transfer/parity/*.jsonl
+!/work/z_transfer/wheels/

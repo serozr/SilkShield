@@ -1,0 +1,39 @@
+{
+  "fingerprint": "9e92c2882d1590258b178aeae898e2d3407d7fa1e9b41527bc03a2144412ab8b",
+  "split_fingerprints": {
+    "challenge": "12c39f4066bff497d455ab7cd21d3a1585e9034fef1b2a13b71658fdb5c623ea",
+    "test": "615e86cb930cd2d6f6ad4df9e008964e2052f7e58d019a7133629447e821e6b5",
+    "train": "d52f3ee890570544bbe0773c71f3a6d9bd5434f91fea537c45ed3d5bf016c9b7",
+    "validation": "e9fe053b8a7f01ff6f866f7dc1046159488108adb47307d296f244c1c004a898"
+  },
+  "splits": {
+    "challenge": {
+      "date_max": 1733937471,
+      "date_min": 1695610553,
+      "n": 814,
+      "n_benign": 0,
+      "n_malicious": 814
+    },
+    "test": {
+      "date_max": 1734220777,
+      "date_min": 1726963308,
+      "n": 119993,
+      "n_benign": 59993,
+      "n_malicious": 60000
+    },
+    "train": {
+      "date_max": 1722124733,
+      "date_min": 1695514050,
+      "n": 132228,
+      "n_benign": 66029,
+      "n_malicious": 66199
+    },
+    "validation": {
+      "date_max": 1726963181,
+      "date_min": 1722124912,
+      "n": 80000,
+      "n_benign": 40000,
+      "n_malicious": 40000
+    }
+  }
+}

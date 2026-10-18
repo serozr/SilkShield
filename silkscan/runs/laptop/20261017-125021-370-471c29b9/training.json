@@ -1,0 +1,64 @@
+{
+  "best_iteration": 500,
+  "n_features": 2618,
+  "n_train": 132228,
+  "n_validation": 80000,
+  "num_trees_trained": 500,
+  "params": {
+    "bagging_fraction": 0.9,
+    "bagging_freq": 1,
+    "bagging_seed": 0,
+    "boosting": "gbdt",
+    "data_random_seed": 0,
+    "deterministic": true,
+    "feature_fraction": 0.9,
+    "feature_fraction_bynode": 0.9,
+    "feature_fraction_seed": 0,
+    "first_metric_only": true,
+    "force_col_wise": true,
+    "is_unbalance": true,
+    "lambda_l1": 0.0,
+    "lambda_l2": 1.0,
+    "learning_rate": 0.1,
+    "max_depth": -1,
+    "metric": [
+      "auc",
+      "binary_logloss"
+    ],
+    "min_data_in_leaf": 100,
+    "min_sum_hessian_in_leaf": 0.001,
+    "num_leaves": 64,
+    "num_threads": 0,
+    "objective": "binary",
+    "seed": 0,
+    "verbosity": -1
+  },
+  "status_counts": {
+    "train": {
+      "ember_v3": {
+        "0": 132228
+      },
+      "import_semantics": {
+        "0": 132215,
+        "3": 13
+      },
+      "section_summary": {
+        "0": 132215,
+        "3": 13
+      }
+    },
+    "validation": {
+      "ember_v3": {
+        "0": 80000
+      },
+      "import_semantics": {
+        "0": 79969,
+        "3": 31
+      },
+      "section_summary": {
+        "0": 79969,
+        "3": 31
+      }
+    }
+  }
+}

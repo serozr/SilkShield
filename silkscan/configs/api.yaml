@@ -1,0 +1,32 @@
+# Run from the repository root: python -m silkscan.api --config configs/api.yaml
+# Keys are supplied ONLY through SILKSCAN_API_KEYS, comma-separated.
+serving: configs/serving.yaml
+host: 127.0.0.1           # local only; put a TLS reverse proxy in front for remote clients
+port: 8090                # 8080 is used by the local Granite (llama.cpp) server in SilkShield
+workers: 4
+sync_timeout_s: 5
+parse_timeout_s: 10
+parse_memory_mb: 2048
+parse_recycle_after: 500   # files per parser process before it is replaced
+max_batch: 1000
+batch_window_ms: 5
+queue_size: 1000
+max_pending_mb: 512
+quarantine_dir: work/api/quarantine
+quarantine_ttl_h: 72
+store_url: sqlite:///work/api/verdicts.db
+rate_limit_per_min: 600
+events_buffer: 10000
+events_client_queue: 256
+heartbeat_s: 15
+auth_required: true
+health_auth_required: false   # /v1/health without a key (monitoring, load balancers)
+worker_start_timeout_s: 120
+worker_timeout_s: 900
+subscriber:
+  enabled: false
+  url: https://upstream.example/events
+  blob_base: /srv/blobs
+  token_env: SILKSCAN_UPSTREAM_TOKEN
+  reconnect_max_s: 60
+  max_event_bytes: 65536

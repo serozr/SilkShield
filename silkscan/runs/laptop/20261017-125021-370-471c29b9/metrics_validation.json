@@ -1,0 +1,25 @@
+{
+  "at_threshold": {
+    "confusion_matrix": {
+      "fn": 5613,
+      "fp": 40,
+      "tn": 39960,
+      "tp": 34387
+    },
+    "fpr": 0.001,
+    "precision": 0.9988381212420484,
+    "recall": 0.859675,
+    "threshold": 0.9976528740810375
+  },
+  "average_precision": 0.9981980714727017,
+  "n": 80000,
+  "n_benign": 40000,
+  "n_malicious": 40000,
+  "note": "Validation is also used for early stopping and threshold selection; report test metrics as the result.",
+  "oracle_tpr_at_fpr": {
+    "0.001": 0.859675,
+    "0.01": 0.968275
+  },
+  "roc_auc": 0.99807134625,
+  "undefined": {}
+}

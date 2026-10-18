@@ -1,0 +1,10 @@
+{
+  "count": 106199,
+  "created": "2026-10-17T11:27:35.271115+00:00",
+  "label": "malicious",
+  "manifest_fingerprint": "9e92c2882d1590258b178aeae898e2d3407d7fa1e9b41527bc03a2144412ab8b",
+  "splits": [
+    "train",
+    "validation"
+  ]
+}

@@ -1,0 +1,211 @@
+{
+  "lightgbm": {
+    "achieved_fpr": 0.001,
+    "below_resolution": false,
+    "bootstrap_threshold": {
+      "n_boot": 200,
+      "p2.5": 0.9955290749146923,
+      "p50": 0.9977758457392509,
+      "p97.5": 0.9983163742213418
+    },
+    "n_benign": 40000,
+    "n_false_positives": 40,
+    "policy": {
+      "column": "ember_v3.header_0043",
+      "flag": "dll",
+      "group_selections": {
+        "no": {
+          "achieved_fpr": 0.000932440450962109,
+          "below_resolution": false,
+          "n_benign": 11797,
+          "n_false_positives": 11,
+          "rule": "score >= threshold",
+          "target_fpr": 0.001,
+          "threshold": 0.9992957819891638
+        },
+        "yes": {
+          "achieved_fpr": 0.0009928021841648052,
+          "below_resolution": false,
+          "n_benign": 28203,
+          "n_false_positives": 28,
+          "rule": "score >= threshold",
+          "target_fpr": 0.001,
+          "threshold": 0.9394710186514393
+        }
+      },
+      "mode": "per_group",
+      "rule": "score >= threshold[flag]",
+      "target_fpr": 0.001,
+      "thresholds": {
+        "no": 0.9992957819891638,
+        "yes": 0.9394710186514393
+      }
+    },
+    "policy_comparison_on_validation": {
+      "auto_rule": "per_group if target_fpr x benign count >= 10.0 in every group; budgets = {'yes': 28.203, 'no': 11.797} -> per_group",
+      "global": {
+        "dll=no": {
+          "confusion_matrix": {
+            "fn": 4534,
+            "fp": 35,
+            "tn": 11762,
+            "tp": 33001
+          },
+          "fpr": 0.0029668559803339833,
+          "precision": 0.9989405497033539,
+          "recall": 0.8792060743306247,
+          "threshold": "per-record (threshold policy)"
+        },
+        "dll=yes": {
+          "confusion_matrix": {
+            "fn": 1079,
+            "fp": 5,
+            "tn": 28198,
+            "tp": 1386
+          },
+          "fpr": 0.00017728610431514379,
+          "precision": 0.9964054636951833,
+          "recall": 0.5622718052738337,
+          "threshold": "per-record (threshold policy)"
+        },
+        "overall": {
+          "confusion_matrix": {
+            "fn": 5613,
+            "fp": 40,
+            "tn": 39960,
+            "tp": 34387
+          },
+          "fpr": 0.001,
+          "precision": 0.9988381212420484,
+          "recall": 0.859675,
+          "threshold": "per-record (threshold policy)"
+        },
+        "thresholds": {
+          "no": 0.9976528740810375,
+          "yes": 0.9976528740810375
+        }
+      },
+      "per_group": {
+        "dll=no": {
+          "confusion_matrix": {
+            "fn": 6353,
+            "fp": 11,
+            "tn": 11786,
+            "tp": 31182
+          },
+          "fpr": 0.000932440450962109,
+          "precision": 0.9996473567787645,
+          "recall": 0.8307446383375516,
+          "threshold": "per-record (threshold policy)"
+        },
+        "dll=yes": {
+          "confusion_matrix": {
+            "fn": 499,
+            "fp": 28,
+            "tn": 28175,
+            "tp": 1966
+          },
+          "fpr": 0.0009928021841648052,
+          "precision": 0.9859578736208626,
+          "recall": 0.7975659229208925,
+          "threshold": "per-record (threshold policy)"
+        },
+        "overall": {
+          "confusion_matrix": {
+            "fn": 6852,
+            "fp": 39,
+            "tn": 39961,
+            "tp": 33148
+          },
+          "fpr": 0.000975,
+          "precision": 0.9988248410522192,
+          "recall": 0.8287,
+          "threshold": "per-record (threshold policy)"
+        },
+        "thresholds": {
+          "no": 0.9992957819891638,
+          "yes": 0.9394710186514393
+        }
+      },
+      "strictest": {
+        "dll=no": {
+          "confusion_matrix": {
+            "fn": 6353,
+            "fp": 11,
+            "tn": 11786,
+            "tp": 31182
+          },
+          "fpr": 0.000932440450962109,
+          "precision": 0.9996473567787645,
+          "recall": 0.8307446383375516,
+          "threshold": "per-record (threshold policy)"
+        },
+        "dll=yes": {
+          "confusion_matrix": {
+            "fn": 1345,
+            "fp": 0,
+            "tn": 28203,
+            "tp": 1120
+          },
+          "fpr": 0.0,
+          "precision": 1.0,
+          "recall": 0.4543610547667343,
+          "threshold": "per-record (threshold policy)"
+        },
+        "overall": {
+          "confusion_matrix": {
+            "fn": 7698,
+            "fp": 11,
+            "tn": 39989,
+            "tp": 32302
+          },
+          "fpr": 0.000275,
+          "precision": 0.9996595797357101,
+          "recall": 0.80755,
+          "threshold": "per-record (threshold policy)"
+        },
+        "thresholds": {
+          "no": 0.9992957819891638,
+          "yes": 0.9992957819891638
+        }
+      }
+    },
+    "review": {
+      "column": "ember_v3.header_0043",
+      "flag": "dll",
+      "mode": "per_group",
+      "selected_on": "validation",
+      "target_fpr": 0.01,
+      "thresholds": {
+        "no": 0.979005413363113,
+        "yes": 0.11889332732953067
+      },
+      "validation": {
+        "benign_review_rate": 0.009,
+        "fpr_auto": 0.000975,
+        "missed_rate": 0.061175,
+        "recall_auto": 0.8287,
+        "recall_auto_or_review": 0.938825,
+        "review_load": 0.0595625,
+        "zones": {
+          "clean": {
+            "benign": 39601,
+            "malicious": 2447
+          },
+          "malicious": {
+            "benign": 39,
+            "malicious": 33148
+          },
+          "suspicious": {
+            "benign": 360,
+            "malicious": 4405
+          }
+        }
+      }
+    },
+    "rule": "score >= threshold",
+    "selected_on": "validation",
+    "target_fpr": 0.001,
+    "threshold": 0.9976528740810375
+  }
+}

@@ -1,0 +1,38 @@
+# Synthetic fixture used by the tests (data is written by silkscan.synthetic.write_fixture).
+seed: 0
+work_dir: work/demo
+runs_dir: work/demo/runs
+
+data:
+  root: work/demo/data
+  file_type: Win64
+  splits:
+    train: ["*_Win64_train.jsonl"]
+    test: ["*_Win64_test.jsonl"]
+    challenge: ["*_challenge.jsonl"]
+  validation_start: "2024-05-15"
+  chunk_size: 512
+
+features:
+  cache_dir: work/demo/cache
+  n_jobs: 1
+  groups:
+    - name: ember_v3          # needs real EMBER raw features, which the fixture lacks
+      enabled: false
+    - name: section_summary
+      missing_policy: impute_with_indicator
+    - name: import_semantics
+      missing_policy: impute_with_indicator
+
+model:
+  num_boost_round: 60
+  early_stopping_rounds: 20
+  params:
+    num_leaves: 15
+    min_data_in_leaf: 20
+    num_threads: 2
+
+evaluation:
+  target_fpr: 0.01
+  report_fprs: [0.01, 0.05]
+  bootstrap: 50
