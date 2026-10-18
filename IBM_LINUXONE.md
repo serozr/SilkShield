@@ -5,13 +5,37 @@
 Demonstrate that SilkShield's security analysis workload can run on IBM
 LinuxONE.
 
-The available environment reported during the event includes:
+The verified host environment reported during the event (`lscpu`):
 
 ``` text
-Architecture: s390x
-CPU(s): 3
-Hypervisor: z/VM 7.3.0
-Vendor: IBM/S390
+Architecture:                s390x
+  CPU op-mode(s):            32-bit, 64-bit
+  Byte Order:                Big Endian
+CPU(s):                      3
+  On-line CPU(s) list:       0-2
+Vendor ID:                   IBM/S390
+  Model name:                -
+    Machine type:            9175
+    Thread(s) per core:      1
+    Core(s) per socket:      1
+    CPU dynamic MHz:         5508
+    CPU static MHz:          5508
+    BogoMIPS:                28901.00
+    Dispatching mode:        horizontal
+Virtualization features:
+  Hypervisor:                z/VM 7.3.0
+  Hypervisor vendor:         IBM
+  Virtualization type:       full
+Caches:
+  L1d:                       384 KiB (3 instances)
+  L1i:                       384 KiB (3 instances)
+  L2:                        108 MiB (3 instances)
+  L3:                        360 MiB
+NUMA:
+  NUMA node(s):              1
+  NUMA node0 CPU(s):         0-2
+Hardware Acceleration Flags:
+  msa (CPACF crypto assist), nnpa (Telum AI assist), sort, dflt, sie
 ```
 
 ## Deployment Target

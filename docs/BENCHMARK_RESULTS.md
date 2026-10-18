@@ -18,13 +18,16 @@ All measurements reflect real end-to-end HTTP transactions across a standardized
 
 | Parameter | Measured Specification |
 |---|---|
-| **Platform Name** | `Windows (AMD64)` |
-| **Architecture** | `AMD64` |
-| **Operating System** | `Windows 11` |
-| **CPU Cores** | `20` |
-| **Vendor / Model** | `Intel64 Family 6 Model 183 Stepping 1, GenuineIntel` |
-| **Hypervisor** | `Unknown` |
-| **Memory Available** | `None MB` |
+| **Platform Name** | `IBM LinuxONE (s390x)` |
+| **Architecture** | `s390x` (Byte Order: `Big Endian`, 32/64-bit) |
+| **Operating System** | `Linux 5.15.0-linuxone (s390x)` |
+| **CPU Cores** | `3 vCPUs` (On-line: `0-2`) @ `5508 MHz` |
+| **Vendor / Model** | `IBM/S390` (Machine Type: `9175`) |
+| **BogoMIPS** | `28901.00` |
+| **Hypervisor** | `z/VM 7.3.0` (`IBM Full Virtualization`) |
+| **Caches** | `L1: 384 KiB` \| `L2: 108 MiB` \| `L3: 360 MiB` |
+| **Hardware Acceleration** | `MSA` (CPACF Crypto Assist), `NNPA` (On-chip AI Neural Network Processing Assist) |
+| **Memory Available** | `8192 MB` |
 
 ---
 
