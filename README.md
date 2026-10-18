@@ -49,6 +49,12 @@ or executed. This does not replace antivirus scanning or sandbox detonation.
 The reputation result depends on the configured intelligence source and is
 labelled in the response metadata.
 
+After an analysis, the dashboard can copy the indicator or full JSON result,
+download the report, or print/save it as PDF. It keeps up to eight recent
+lookups in browser-local storage; selecting one performs a fresh lookup. Use
+**Clear history** to remove those local entries. The report labels live,
+cached, demo-fixture, and fallback intelligence separately.
+
 ### MVP Outputs
 
 -   Threat score: 0--100

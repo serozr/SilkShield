@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/style.css?v=private-hash-search-1">
+    <link rel="stylesheet" href="/static/style.css?v=report-workspace-2">
 </head>
 <body>
     <a class="skip-link" href="#main-content">Skip to analysis</a>
@@ -108,6 +108,17 @@
             </div>
         </section>
 
+        <section class="history-panel glass hidden" id="history-section" aria-labelledby="history-title">
+            <div class="history-heading">
+                <div>
+                    <h2 id="history-title">Recent analyses</h2>
+                    <p>Saved only in this browser · select one to run a fresh lookup</p>
+                </div>
+                <button class="history-clear" id="clear-history" type="button">Clear history</button>
+            </div>
+            <ul class="history-list" id="history-list"></ul>
+        </section>
+
         <!-- Idle State -->
         <section class="idle-state" id="idle-state">
             <div class="idle-card glass">
@@ -167,6 +178,20 @@
 
         <!-- Result State -->
         <section class="result-state hidden" id="result-state">
+            <div class="result-toolbar glass" aria-label="Analysis report actions">
+                <div class="result-source-wrap">
+                    <span class="result-kicker">ANALYSIS REPORT</span>
+                    <span class="result-source" id="result-source-status">Intelligence · —</span>
+                </div>
+                <div class="result-actions">
+                    <button class="result-action" id="copy-indicator" type="button">Copy indicator</button>
+                    <button class="result-action" id="copy-report" type="button">Copy report</button>
+                    <button class="result-action" id="download-report" type="button">Download JSON</button>
+                    <button class="result-action primary" id="print-report" type="button">Print / Save PDF</button>
+                </div>
+                <span class="action-feedback" id="action-feedback" role="status" aria-live="polite"></span>
+            </div>
+
             <!-- Score Hero -->
             <div class="score-hero glass" id="score-hero">
                 <div class="score-ring-container">
@@ -323,6 +348,6 @@
         <p>SilkShield &mdash; Real-Time AI for Critical Security Decisions</p>
     </footer>
 
-    <script src="/static/app.js?v=private-hash-search-1"></script>
+    <script src="/static/app.js?v=report-workspace-2"></script>
 </body>
 </html>

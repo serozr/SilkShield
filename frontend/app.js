@@ -46,6 +46,9 @@ async function loadDemoIOCs() {
 // ─── Analysis ──────────────────────────────────────────────── //
 
 let lastIOC = "";
+let lastResult = null;
+const HISTORY_KEY = "silkshield.analysis-history.v1";
+const HISTORY_LIMIT = 8;
 
 async function analyzeIOC(iocOverride = null, actionButton = $("analyze-btn")) {
     const input = $("ioc-input");
@@ -81,7 +84,9 @@ async function analyzeIOC(iocOverride = null, actionButton = $("analyze-btn")) {
         }
 
         const data = await res.json();
-        renderResult(data);
+        lastResult = { ...data, analyzed_at: new Date().toISOString() };
+        renderResult(lastResult);
+        saveAnalysisHistory(lastResult);
         showState("result-state");
         return true;
     } catch (err) {
@@ -353,12 +358,170 @@ function renderResult(d) {
     const rawSource = meta.intelligence_source || "";
     const sourceDisplay = sourceLabels[rawSource] || rawSource || "Standard";
 
+    const sourceStatus = $("result-source-status");
+    const sourceTone = rawSource === "virustotal" || rawSource === "virustotal_live" || rawSource === "virustotal_unseen"
+        ? "live"
+        : rawSource === "virustotal_cached"
+          ? "cached"
+          : rawSource === "demo_fixture"
+            ? "demo"
+            : "fallback";
+    sourceStatus.textContent = `Intelligence · ${sourceDisplay}`;
+    sourceStatus.className = `result-source ${sourceTone}`;
+
     // Metadata bar
     $("meta-source").textContent = `Source: ${sourceDisplay}`;
     $("meta-model").textContent = `ML: ${meta.model_available ? "XGBoost" : "Heuristic"}`;
     $("meta-provider").textContent = `AI: ${meta.ai_provider || "—"}`;
     $("meta-platform").textContent = `Host: ${meta.host_platform || "Standard"}`;
     $("meta-version").textContent = `v${meta.analysis_version || "0.1.0"}`;
+}
+
+// ─── Local history and report actions ──────────────────────── //
+
+function readAnalysisHistory() {
+    try {
+        const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
+        return Array.isArray(history) ? history.filter((item) => item && typeof item.ioc === "string") : [];
+    } catch {
+        return [];
+    }
+}
+
+function saveAnalysisHistory(result) {
+    const item = {
+        ioc: result.ioc,
+        type: result.type,
+        risk_score: result.risk_score,
+        risk_level: result.risk_level,
+        classification: result.classification,
+        recommendation: result.recommendation,
+        intelligence_source: result.metadata?.intelligence_source || "unknown",
+        analyzed_at: result.analyzed_at,
+    };
+    try {
+        const history = readAnalysisHistory().filter((entry) => entry.ioc.toLowerCase() !== item.ioc.toLowerCase());
+        localStorage.setItem(HISTORY_KEY, JSON.stringify([item, ...history].slice(0, HISTORY_LIMIT)));
+    } catch {
+        /* Browser storage may be disabled or full; the analysis still succeeds. */
+    }
+    renderAnalysisHistory();
+}
+
+function renderAnalysisHistory() {
+    const panel = $("history-section");
+    const list = $("history-list");
+    if (!panel || !list) return;
+    const history = readAnalysisHistory().slice(0, HISTORY_LIMIT);
+    list.replaceChildren();
+    panel.classList.toggle("hidden", history.length === 0);
+
+    history.forEach((entry) => {
+        const row = document.createElement("li");
+        const button = document.createElement("button");
+        button.className = "history-entry";
+        button.type = "button";
+
+        const details = document.createElement("span");
+        details.className = "history-details";
+        const indicator = document.createElement("strong");
+        indicator.textContent = entry.ioc;
+        const context = document.createElement("small");
+        context.textContent = `${String(entry.type || "IOC").toUpperCase()} · ${entry.classification || "—"} · ${historyTime(entry.analyzed_at)}`;
+        details.append(indicator, context);
+
+        const outcome = document.createElement("span");
+        outcome.className = `history-outcome ${String(entry.risk_level || "").toLowerCase()}`;
+        outcome.textContent = `${entry.risk_level || "—"} · ${entry.risk_score ?? "—"}`;
+        const source = document.createElement("small");
+        source.className = "history-source";
+        source.textContent = sourceLabel(entry.intelligence_source);
+        button.append(details, outcome, source);
+        button.title = "Run a fresh lookup for this indicator";
+        button.addEventListener("click", () => {
+            setSearchMode("ioc");
+            $("ioc-input").value = entry.ioc;
+            updateDetectedType();
+            analyzeIOC();
+        });
+        row.append(button);
+        list.append(row);
+    });
+}
+
+function historyTime(value) {
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? "Previous lookup" : date.toLocaleString();
+}
+
+function sourceLabel(source) {
+    const labels = {
+        virustotal: "VirusTotal · live",
+        virustotal_live: "VirusTotal · live",
+        virustotal_cached: "VirusTotal · cached",
+        virustotal_unseen: "VirusTotal · unseen",
+        virustotal_rate_limited: "VirusTotal · fallback",
+        demo_fixture: "Demo fixture",
+        local_fallback: "Local fallback",
+    };
+    return labels[source] || source || "Unknown source";
+}
+
+function showActionFeedback(message) {
+    const feedback = $("action-feedback");
+    if (!feedback) return;
+    feedback.textContent = message;
+    clearTimeout(showActionFeedback.timer);
+    showActionFeedback.timer = setTimeout(() => { feedback.textContent = ""; }, 2600);
+}
+
+async function copyText(text, label) {
+    try {
+        if (navigator.clipboard?.writeText) {
+            await navigator.clipboard.writeText(text);
+        } else {
+            const field = document.createElement("textarea");
+            field.value = text;
+            field.style.position = "fixed";
+            field.style.opacity = "0";
+            document.body.append(field);
+            field.select();
+            const copied = document.execCommand("copy");
+            field.remove();
+            if (!copied) throw new Error("Clipboard unavailable");
+        }
+        showActionFeedback(`${label} copied`);
+    } catch {
+        showActionFeedback("Could not access clipboard");
+    }
+}
+
+function initReportActions() {
+    $("copy-indicator")?.addEventListener("click", () => {
+        if (lastResult) copyText(lastResult.ioc, "Indicator");
+    });
+    $("copy-report")?.addEventListener("click", () => {
+        if (lastResult) copyText(JSON.stringify(lastResult, null, 2), "Report");
+    });
+    $("download-report")?.addEventListener("click", () => {
+        if (!lastResult) return;
+        const file = new Blob([JSON.stringify(lastResult, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(file);
+        const link = document.createElement("a");
+        const safeIOC = String(lastResult.ioc).replace(/[^a-z\d.-]+/gi, "-").slice(0, 48) || "indicator";
+        link.href = url;
+        link.download = `silkshield-report-${safeIOC}.json`;
+        link.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        showActionFeedback("JSON report downloaded");
+    });
+    $("print-report")?.addEventListener("click", () => window.print());
+    $("clear-history")?.addEventListener("click", () => {
+        try { localStorage.removeItem(HISTORY_KEY); } catch { /* storage may be disabled */ }
+        renderAnalysisHistory();
+        showActionFeedback("Local history cleared");
+    });
+    renderAnalysisHistory();
 }
 
 // ─── System Telemetry & Hardware Modal ────────────────────── //
@@ -504,6 +667,7 @@ document.addEventListener("keydown", (e) => {
 // ─── Init ──────────────────────────────────────────────────── //
 document.addEventListener("DOMContentLoaded", () => {
     initSearchControls();
+    initReportActions();
     loadDemoIOCs();
     loadSystemTelemetry();
     loadSystemStatus();
