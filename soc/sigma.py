@@ -1,10 +1,4 @@
-"""Small, dependency-free Sigma subset used for deterministic detections.
-
-The engine intentionally supports a constrained rule vocabulary instead of
-pretending to implement the complete Sigma specification. Rules are YAML-like
-Python dictionaries loaded from JSON-compatible files, making the core
-portable to LinuxONE without another runtime dependency.
-"""
+"""Small, dependency-free Sigma subset used for deterministic detections."""
 
 from __future__ import annotations
 
@@ -22,22 +16,25 @@ class SigmaRule:
     level: str
     description: str
     logsource: dict[str, Any]
-    selections: dict[str, dict[str, Any]]
+    selection: dict[str, Any]
     mitre: tuple[str, ...] = ()
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "SigmaRule":
         detection = data.get("detection", {})
-        selections = {
-            key: value for key, value in detection.items() if key != "condition"
-        }
+        condition = str(detection.get("condition", "selection")).strip()
+        if condition != "selection":
+            raise ValueError(f"Unsupported Sigma condition: {condition}")
+        selection = detection.get("selection")
+        if not isinstance(selection, dict):
+            raise ValueError("Rule must contain detection.selection as an object")
         return cls(
             id=str(data["id"]),
             title=str(data["title"]),
             level=str(data.get("level", "medium")).lower(),
             description=str(data.get("description", "")),
             logsource=dict(data.get("logsource", {})),
-            selections=selections,
+            selection=selection,
             mitre=tuple(data.get("tags", [])),
         )
 
@@ -68,25 +65,19 @@ def _matches(value: Any, expected: Any) -> bool:
 
 
 def _selection_matches(event: DetectionEvent, selection: dict[str, Any]) -> bool:
-    return all(_matches(_field_value(event, field), expected) for field, expected in selection.items())
+    return all(
+        _matches(_field_value(event, field), expected)
+        for field, expected in selection.items()
+    )
 
 
 def match_rule(rule: SigmaRule, event: DetectionEvent) -> DetectionMatch | None:
-    """Evaluate the supported `selection`/`condition: selection` form."""
-    condition = str(rule.selections.get("condition", "selection"))
-    selections = {
-        key: value for key, value in rule.selections.items() if key != "condition"
-    }
-    if condition == "selection" and selections:
-        # The common Sigma shape is one selection map.
-        selection = selections.get("selection", next(iter(selections.values())))
-        if not _selection_matches(event, selection):
-            return None
-    else:
+    """Evaluate the intentionally constrained `condition: selection` form."""
+    if not _selection_matches(event, rule.selection):
         return None
-
     evidence = tuple(
-        f"{field}={_field_value(event, field)}" for field in selections.get("selection", {}).keys()
+        f"{field}={_field_value(event, field)}"
+        for field in rule.selection
     )
     return DetectionMatch(
         rule_id=rule.id,
