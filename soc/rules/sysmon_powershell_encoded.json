@@ -1,0 +1,13 @@
+{
+  "id": "SILK-PS-001",
+  "title": "PowerShell encoded command execution",
+  "status": "stable",
+  "level": "high",
+  "description": "Detects PowerShell command lines containing encoded-command execution indicators.",
+  "logsource": {"product": "windows", "service": "sysmon", "definition": "process_creation"},
+  "detection": {
+    "selection": {"Image": "*powershell.exe", "CommandLine": "*-enc*"},
+    "condition": "selection"
+  },
+  "tags": ["T1059.001"]
+}

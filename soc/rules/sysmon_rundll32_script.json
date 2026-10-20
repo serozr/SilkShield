@@ -1,0 +1,13 @@
+{
+  "id": "SILK-RUNDLL32-001",
+  "title": "Rundll32 executing a script handler",
+  "status": "stable",
+  "level": "high",
+  "description": "Flags rundll32 command lines referencing script handlers, a common proxy-execution pattern.",
+  "logsource": {"product": "windows", "service": "sysmon", "definition": "process_creation"},
+  "detection": {
+    "selection": {"Image": "*rundll32.exe", "CommandLine": "*javascript:*"},
+    "condition": "selection"
+  },
+  "tags": ["T1218.011"]
+}
